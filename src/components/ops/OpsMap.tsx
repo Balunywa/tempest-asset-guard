@@ -122,7 +122,7 @@ export function OpsMap({
       <svg
         viewBox={`0 0 ${W} ${H}`}
         className="h-full w-full cursor-grab active:cursor-grabbing"
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio="xMidYMid meet"
         onMouseDown={(e) => {
           drag.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
         }}
