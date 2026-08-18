@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AlertsRouteImport } from './routes/alerts'
+import { Route as AssetsRouteImport } from './routes/assets'
+import { Route as CopilotRouteImport } from './routes/copilot'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as RiskRouteImport } from './routes/risk'
@@ -24,6 +26,16 @@ const IndexRoute = IndexRouteImport.update({
 const AlertsRoute = AlertsRouteImport.update({
   id: '/alerts',
   path: '/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssetsRoute = AssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CopilotRoute = CopilotRouteImport.update({
+  id: '/copilot',
+  path: '/copilot',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -50,6 +62,8 @@ const TimelineRoute = TimelineRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
+  '/assets': typeof AssetsRoute
+  '/copilot': typeof CopilotRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
   '/risk': typeof RiskRoute
@@ -58,6 +72,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
+  '/assets': typeof AssetsRoute
+  '/copilot': typeof CopilotRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
   '/risk': typeof RiskRoute
@@ -67,6 +83,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
+  '/assets': typeof AssetsRoute
+  '/copilot': typeof CopilotRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
   '/risk': typeof RiskRoute
@@ -74,15 +92,42 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/alerts' | '/events' | '/map' | '/risk' | '/timeline'
+  fullPaths:
+    | '/'
+    | '/alerts'
+    | '/assets'
+    | '/copilot'
+    | '/events'
+    | '/map'
+    | '/risk'
+    | '/timeline'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/alerts' | '/events' | '/map' | '/risk' | '/timeline'
-  id: '__root__' | '/' | '/alerts' | '/events' | '/map' | '/risk' | '/timeline'
+  to:
+    | '/'
+    | '/alerts'
+    | '/assets'
+    | '/copilot'
+    | '/events'
+    | '/map'
+    | '/risk'
+    | '/timeline'
+  id:
+    | '__root__'
+    | '/'
+    | '/alerts'
+    | '/assets'
+    | '/copilot'
+    | '/events'
+    | '/map'
+    | '/risk'
+    | '/timeline'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AlertsRoute: typeof AlertsRoute
+  AssetsRoute: typeof AssetsRoute
+  CopilotRoute: typeof CopilotRoute
   EventsRoute: typeof EventsRoute
   MapRoute: typeof MapRoute
   RiskRoute: typeof RiskRoute
@@ -103,6 +148,20 @@ declare module '@tanstack/react-router' {
       path: '/alerts'
       fullPath: '/alerts'
       preLoaderRoute: typeof AlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assets': {
+      id: '/assets'
+      path: '/assets'
+      fullPath: '/assets'
+      preLoaderRoute: typeof AssetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/copilot': {
+      id: '/copilot'
+      path: '/copilot'
+      fullPath: '/copilot'
+      preLoaderRoute: typeof CopilotRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -139,6 +198,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AlertsRoute: AlertsRoute,
+  AssetsRoute: AssetsRoute,
+  CopilotRoute: CopilotRoute,
   EventsRoute: EventsRoute,
   MapRoute: MapRoute,
   RiskRoute: RiskRoute,
