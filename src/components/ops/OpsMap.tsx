@@ -329,10 +329,10 @@ export function OpsMap({
         </defs>
 
         <g
-          transform={`translate(${W / 2 + pan.x / Math.max(1, 1)} ${H / 2}) scale(${zoom}) translate(${-W / 2} ${-H / 2})`}
-          style={{ transform: `translate(${W / 2}px, ${H / 2}px) scale(${zoom}) translate(${-W / 2}px, ${-H / 2}px)` }}
+          transform={`translate(${pan.x} ${pan.y}) translate(${W / 2} ${H / 2}) scale(${zoom}) translate(${-W / 2} ${-H / 2})`}
         >
-          <g transform={`translate(${pan.x / zoom} ${pan.y / zoom})`}>
+          <g>
+
             {/* ---------- basemap ---------- */}
             <rect x={-W} y={-H} width={W * 3} height={H * 3} fill="var(--color-ocean-deep)" />
             <path d={bathymetryBand(v)} fill="url(#shelfFade)" />
