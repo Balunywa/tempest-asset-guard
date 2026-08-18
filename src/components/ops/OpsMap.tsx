@@ -135,7 +135,7 @@ export function OpsMap({
   const metrics = useCallback(() => {
     const el = containerRef.current;
     const rect = el?.getBoundingClientRect() ?? new DOMRect(0, 0, W, H);
-    const baseScale = Math.max(rect.width / W, rect.height / H) || 1;
+    const baseScale = Math.min(rect.width / W, rect.height / H) || 1;
     return { rect, baseScale };
   }, []);
 
@@ -173,7 +173,7 @@ export function OpsMap({
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const rect = el.getBoundingClientRect();
-      const baseScale = Math.max(rect.width / W, rect.height / H) || 1;
+      const baseScale = Math.min(rect.width / W, rect.height / H) || 1;
       const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 100 : 1);
       const { zoom: z } = view.current;
       zoomAtRef.current(
@@ -242,9 +242,9 @@ export function OpsMap({
   const windRadii = useMemo(() => {
     const scale = pos.windMph / 130;
     return [
-      { kt: 34, mi: 205 * scale, opacity: 0.16 },
-      { kt: 50, mi: 125 * scale, opacity: 0.2 },
-      { kt: 64, mi: 68 * scale, opacity: 0.26 },
+      { kt: 34, mi: 205 * scale, opacity: 0.09 },
+      { kt: 50, mi: 125 * scale, opacity: 0.12 },
+      { kt: 64, mi: 68 * scale, opacity: 0.18 },
     ].filter((r) => r.mi > 4);
   }, [pos.windMph]);
 
@@ -274,11 +274,11 @@ export function OpsMap({
   );
 
   return (
-    <div ref={containerRef} className={cn("relative touch-none overflow-hidden bg-ocean", className)}>
+    <div ref={containerRef} className={cn("relative touch-none overflow-hidden bg-ocean-deep", className)}>
       <svg
         viewBox={`0 0 ${W} ${H}`}
         className="h-full w-full cursor-grab active:cursor-grabbing"
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio="xMidYMid meet"
         onMouseDown={(e) => {
           drag.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y, moved: false };
         }}
