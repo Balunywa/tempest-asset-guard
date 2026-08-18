@@ -128,32 +128,38 @@ export function OpsMap({
   const highlight = new Set(highlightIds);
 
   // ---- cursor-anchored wheel zoom (native, non-passive) --------------------
+  // All pan/zoom math runs in viewBox units; `baseScale` converts CSS px → units.
   const view = useRef({ zoom, pan });
   view.current = { zoom, pan };
 
-  const clampPan = useCallback((p: { x: number; y: number }, z: number) => {
+  const metrics = useCallback(() => {
     const el = containerRef.current;
-    if (!el) return p;
-    const rect = el.getBoundingClientRect();
-    const scale = Math.min(rect.width / W, rect.height / H);
-    const cw = W * scale * z;
-    const ch = H * scale * z;
-    const maxX = Math.max(0, (cw - rect.width) / 2 + (rect.width - W * scale) / 2);
-    const maxY = Math.max(0, (ch - rect.height) / 2 + (rect.height - H * scale) / 2);
-    return {
-      x: Math.min(maxX, Math.max(-maxX, p.x)),
-      y: Math.min(maxY, Math.max(-maxY, p.y)),
-    };
+    const rect = el?.getBoundingClientRect() ?? new DOMRect(0, 0, W, H);
+    const baseScale = Math.max(rect.width / W, rect.height / H) || 1;
+    return { rect, baseScale };
   }, []);
 
+  const clampPan = useCallback(
+    (p: { x: number; y: number }, z: number) => {
+      const { rect, baseScale } = metrics();
+      const maxX = Math.max(0, (W * z) / 2 - rect.width / (2 * baseScale));
+      const maxY = Math.max(0, (H * z) / 2 - rect.height / (2 * baseScale));
+      return {
+        x: Math.min(maxX, Math.max(-maxX, p.x)),
+        y: Math.min(maxY, Math.max(-maxY, p.y)),
+      };
+    },
+    [metrics],
+  );
+
+  /** `ux`/`uy`: anchor point relative to the map centre, in viewBox units. */
   const zoomAt = useCallback(
-    (nextZoom: number, px: number, py: number) => {
+    (nextZoom: number, ux: number, uy: number) => {
       const { zoom: z, pan: p } = view.current;
       const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, nextZoom));
       const k = next / z;
-      const offset = { x: px - (px - p.x) * k, y: py - (py - p.y) * k };
       setZoom(next);
-      setPan(clampPan(offset, next));
+      setPan(clampPan({ x: ux * (1 - k) + k * p.x, y: uy * (1 - k) + k * p.y }, next));
     },
     [clampPan],
   );
@@ -167,17 +173,19 @@ export function OpsMap({
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const rect = el.getBoundingClientRect();
+      const baseScale = Math.max(rect.width / W, rect.height / H) || 1;
       const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 100 : 1);
       const { zoom: z } = view.current;
       zoomAtRef.current(
         z * Math.exp(-dy * 0.0018),
-        e.clientX - rect.left - rect.width / 2,
-        e.clientY - rect.top - rect.height / 2,
+        (e.clientX - rect.left - rect.width / 2) / baseScale,
+        (e.clientY - rect.top - rect.height / 2) / baseScale,
       );
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
+
 
   // ---- storm geometry ------------------------------------------------------
   /** NHC-style cone: circles of uncertainty swept along the track, offset on the segment normal. */
