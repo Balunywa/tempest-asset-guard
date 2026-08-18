@@ -283,28 +283,28 @@ export function OpsMap({
           drag.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y, moved: false };
         }}
         onMouseMove={(e) => {
-          const rect = containerRef.current?.getBoundingClientRect();
-          if (rect) {
-            const scale = Math.max(rect.width / W, rect.height / H) * zoom;
-            const mx = (e.clientX - rect.left - rect.width / 2 - pan.x) / scale + W / 2;
-            const my = (e.clientY - rect.top - rect.height / 2 - pan.y) / scale + H / 2;
-            setCursor({
-              lon: v.minLon + (mx / W) * (v.maxLon - v.minLon),
-              lat: v.maxLat - (my / H) * (v.maxLat - v.minLat),
-            });
-          }
+          const { rect, baseScale } = metrics();
+          const ux = (e.clientX - rect.left - rect.width / 2) / baseScale;
+          const uy = (e.clientY - rect.top - rect.height / 2) / baseScale;
+          const mx = W / 2 + (ux - pan.x) / zoom;
+          const my = H / 2 + (uy - pan.y) / zoom;
+          setCursor({
+            lon: v.minLon + (mx / W) * (v.maxLon - v.minLon),
+            lat: v.maxLat - (my / H) * (v.maxLat - v.minLat),
+          });
           if (!drag.current) return;
           drag.current.moved = true;
           setPan(
             clampPan(
               {
-                x: drag.current.px + (e.clientX - drag.current.x),
-                y: drag.current.py + (e.clientY - drag.current.y),
+                x: drag.current.px + (e.clientX - drag.current.x) / baseScale,
+                y: drag.current.py + (e.clientY - drag.current.y) / baseScale,
               },
               zoom,
             ),
           );
         }}
+
         onMouseUp={() => (drag.current = null)}
         onMouseLeave={() => {
           drag.current = null;
