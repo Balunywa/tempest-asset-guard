@@ -49,7 +49,7 @@ export function trackProximity(asset: Asset, event: WeatherEvent, maxHour = 120)
           distanceMi: d,
           hoursToImpact: s.hour,
           nearest: { ...s.base, hour: Math.round(s.hour) },
-          insideCone: d <= Math.max(cone, 25),
+          insideCone: d <= Math.min(Math.max(cone, 25), 140),
         };
       }
     }
@@ -86,18 +86,18 @@ export function levelFromScore(score: number): RiskLevel {
 }
 
 const TYPE_SENSITIVITY: Record<Asset["type"], { points: number; note: string }> = {
-  offshore_platform: { points: 10, note: "Offshore facility — crew evacuation and shut-in lead time required" },
-  pipeline: { points: 6, note: "Subsea/onshore pipeline — scour, rainfall and right-of-way exposure" },
-  lng_terminal: { points: 8, note: "LNG terminal — marine loading and storm surge sensitivity" },
-  refinery: { points: 7, note: "Refinery — flooding and safe-shutdown lead time" },
-  storage: { points: 5, note: "Storage facility — surge and access exposure" },
-  port: { points: 6, note: "Port/logistics base — staging capacity is critical during evacuations" },
-  well: { points: 3, note: "Wellhead — limited manned exposure" },
+  offshore_platform: { points: 8, note: "Offshore facility — crew evacuation and shut-in lead time required" },
+  pipeline: { points: 5, note: "Subsea/onshore pipeline — scour, rainfall and right-of-way exposure" },
+  lng_terminal: { points: 6, note: "LNG terminal — marine loading and storm surge sensitivity" },
+  refinery: { points: 6, note: "Refinery — flooding and safe-shutdown lead time" },
+  storage: { points: 4, note: "Storage facility — surge and access exposure" },
+  port: { points: 5, note: "Port/logistics base — staging capacity is critical during evacuations" },
+  well: { points: 2, note: "Wellhead — limited manned exposure" },
 };
 
 const CRITICALITY: Record<Asset["criticality"], { points: number; label: string }> = {
-  business_critical: { points: 12, label: "Asset designated business-critical" },
-  important: { points: 7, label: "Asset designated operationally important" },
+  business_critical: { points: 10, label: "Asset designated business-critical" },
+  important: { points: 6, label: "Asset designated operationally important" },
   standard: { points: 2, label: "Asset designated standard criticality" },
 };
 
@@ -107,21 +107,21 @@ export function scoreAsset(asset: Asset, event: WeatherEvent, horizonHours = 120
   const rain = forecastRainfallAt(prox.distanceMi, prox.nearest.category);
   const factors = [];
 
-  const distPoints = Math.round(Math.max(0, 32 * Math.exp(-prox.distanceMi / 150)));
+  const distPoints = Math.round(Math.max(0, 26 * Math.exp(-prox.distanceMi / 95)));
   factors.push({
     label: "Storm proximity",
     detail: `${Math.round(prox.distanceMi)} miles from the predicted storm centerline`,
     points: distPoints,
   });
 
-  const windPoints = Math.round(Math.min(30, Math.max(0, (wind - 39) / 2.6)));
+  const windPoints = Math.round(Math.min(24, Math.max(0, (wind - 50) / 3.7)));
   factors.push({
     label: "Forecast wind",
     detail: `${wind} mph sustained forecast at closest approach`,
     points: windPoints,
   });
 
-  const rainPoints = Math.round(Math.min(12, rain * 1.3));
+  const rainPoints = Math.round(Math.min(8, rain * 0.9));
   factors.push({
     label: "Forecast rainfall",
     detail: `${rain} in forecast accumulation`,
@@ -129,14 +129,14 @@ export function scoreAsset(asset: Asset, event: WeatherEvent, horizonHours = 120
   });
 
   const eta = prox.hoursToImpact;
-  const etaPoints = eta === null ? 0 : Math.round(Math.max(0, 14 - eta / 9));
+  const etaPoints = eta === null ? 0 : Math.round(Math.max(0, 10 - eta / 12));
   factors.push({
     label: "Time to impact",
     detail: eta === null ? "No impact within the forecast horizon" : `Closest approach in ${Math.round(eta)} hours`,
     points: etaPoints,
   });
 
-  const intensityPoints = Math.round(prox.nearest.category * 2.5);
+  const intensityPoints = prox.distanceMi > 220 ? 0 : Math.round(prox.nearest.category * 2);
   factors.push({
     label: "Storm intensity",
     detail: `${event.name} forecast at ${prox.nearest.category > 0 ? `Category ${prox.nearest.category}` : "tropical storm strength"} at closest approach`,
@@ -153,7 +153,7 @@ export function scoreAsset(asset: Asset, event: WeatherEvent, horizonHours = 120
     factors.push({
       label: "Forecast cone",
       detail: "Asset lies inside the projected impact corridor",
-      points: 8,
+      points: 6,
     });
   }
 
