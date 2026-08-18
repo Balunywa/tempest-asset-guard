@@ -7,7 +7,11 @@ import type { Asset, OpsAlert, WeatherEvent } from "@/lib/domain/types";
 
 export const SAMPLE_DATASET_ID = "sample-gom-v1";
 
-const operators = ["Meridian Energy", "Gulfstar Offshore", "Delta Petroleum", "Coastal LNG Partners"];
+const OP_MERIDIAN = "Meridian Energy";
+const OP_GULFSTAR = "Gulfstar Offshore";
+const OP_DELTA = "Delta Petroleum";
+const OP_COASTAL = "Coastal LNG Partners";
+const operators: readonly string[] = [OP_MERIDIAN, OP_GULFSTAR, OP_DELTA, OP_COASTAL];
 
 function well(
   id: string,
@@ -39,7 +43,7 @@ export const sampleAssets: Asset[] = [
     type: "offshore_platform",
     lat: 27.62,
     lon: -90.35,
-    operator: operators[0],
+    operator: OP_MERIDIAN,
     region: "Central Gulf",
     businessUnit: "Deepwater Production",
     status: "producing",
@@ -52,7 +56,7 @@ export const sampleAssets: Asset[] = [
     type: "offshore_platform",
     lat: 28.41,
     lon: -89.42,
-    operator: operators[0],
+    operator: OP_MERIDIAN,
     region: "Mississippi Canyon",
     businessUnit: "Deepwater Production",
     status: "producing",
@@ -65,7 +69,7 @@ export const sampleAssets: Asset[] = [
     type: "offshore_platform",
     lat: 26.88,
     lon: -91.6,
-    operator: operators[1],
+    operator: OP_GULFSTAR,
     region: "Central Gulf",
     businessUnit: "Deepwater Production",
     status: "reduced",
@@ -78,7 +82,7 @@ export const sampleAssets: Asset[] = [
     type: "offshore_platform",
     lat: 28.05,
     lon: -92.4,
-    operator: operators[1],
+    operator: OP_GULFSTAR,
     region: "Western Gulf",
     businessUnit: "Shelf Production",
     status: "producing",
@@ -91,7 +95,7 @@ export const sampleAssets: Asset[] = [
     type: "offshore_platform",
     lat: 26.1,
     lon: -93.2,
-    operator: operators[2],
+    operator: OP_DELTA,
     region: "Western Gulf",
     businessUnit: "Shelf Production",
     status: "standby",
@@ -104,7 +108,7 @@ export const sampleAssets: Asset[] = [
     type: "offshore_platform",
     lat: 27.05,
     lon: -88.7,
-    operator: operators[0],
+    operator: OP_MERIDIAN,
     region: "Eastern Gulf",
     businessUnit: "Deepwater Production",
     status: "producing",
@@ -117,7 +121,7 @@ export const sampleAssets: Asset[] = [
     type: "offshore_platform",
     lat: 27.9,
     lon: -90.9,
-    operator: operators[1],
+    operator: OP_GULFSTAR,
     region: "Central Gulf",
     businessUnit: "Drilling",
     status: "producing",
@@ -130,7 +134,7 @@ export const sampleAssets: Asset[] = [
     type: "refinery",
     lat: 29.87,
     lon: -93.93,
-    operator: operators[2],
+    operator: OP_DELTA,
     region: "Texas Coast",
     businessUnit: "Downstream",
     status: "producing",
@@ -143,7 +147,7 @@ export const sampleAssets: Asset[] = [
     type: "refinery",
     lat: 30.48,
     lon: -91.19,
-    operator: operators[2],
+    operator: OP_DELTA,
     region: "Louisiana",
     businessUnit: "Downstream",
     status: "producing",
@@ -156,7 +160,7 @@ export const sampleAssets: Asset[] = [
     type: "lng_terminal",
     lat: 29.74,
     lon: -93.87,
-    operator: operators[3],
+    operator: OP_COASTAL,
     region: "Texas Coast",
     businessUnit: "LNG",
     status: "producing",
@@ -169,7 +173,7 @@ export const sampleAssets: Asset[] = [
     type: "lng_terminal",
     lat: 29.86,
     lon: -93.32,
-    operator: operators[3],
+    operator: OP_COASTAL,
     region: "Louisiana",
     businessUnit: "LNG",
     status: "producing",
@@ -182,7 +186,7 @@ export const sampleAssets: Asset[] = [
     type: "storage",
     lat: 29.48,
     lon: -90.29,
-    operator: operators[0],
+    operator: OP_MERIDIAN,
     region: "Louisiana",
     businessUnit: "Midstream",
     status: "producing",
@@ -195,7 +199,7 @@ export const sampleAssets: Asset[] = [
     type: "port",
     lat: 29.11,
     lon: -90.2,
-    operator: operators[0],
+    operator: OP_MERIDIAN,
     region: "Louisiana",
     businessUnit: "Logistics",
     status: "producing",
@@ -208,7 +212,7 @@ export const sampleAssets: Asset[] = [
     type: "port",
     lat: 29.31,
     lon: -94.79,
-    operator: operators[1],
+    operator: OP_GULFSTAR,
     region: "Texas Coast",
     businessUnit: "Logistics",
     status: "producing",
@@ -227,7 +231,7 @@ export const sampleAssets: Asset[] = [
       [-90.5, 28.6],
       [-90.3, 29.2],
     ],
-    operator: operators[0],
+    operator: OP_MERIDIAN,
     region: "Central Gulf",
     businessUnit: "Midstream",
     status: "producing",
@@ -246,7 +250,7 @@ export const sampleAssets: Asset[] = [
       [-92.0, 29.0],
       [-93.4, 29.6],
     ],
-    operator: operators[1],
+    operator: OP_GULFSTAR,
     region: "Western Gulf",
     businessUnit: "Midstream",
     status: "producing",
@@ -265,7 +269,7 @@ export const sampleAssets: Asset[] = [
       [-92.6, 29.8],
       [-93.9, 29.9],
     ],
-    operator: operators[2],
+    operator: OP_DELTA,
     region: "Louisiana",
     businessUnit: "Midstream",
     status: "producing",
@@ -273,6 +277,8 @@ export const sampleAssets: Asset[] = [
     metadata: { diameter_in: 36, length_mi: 232, throughput_bpd: 540000 },
   },
 ];
+
+const WELL_NAMES = ["Marlin", "Cobia", "Tarpon", "Amberjack", "Wahoo", "Bonito"];
 
 // A field of synthetic wells fills out the estate to a realistic count.
 const wellSeeds: Array<[number, number]> = [];
@@ -285,11 +291,11 @@ wellSeeds.forEach(([lat, lon], i) => {
   sampleAssets.push(
     well(
       `WEL-${String(i + 1).padStart(3, "0")}`,
-      `Well ${["Marlin", "Cobia", "Tarpon", "Amberjack", "Wahoo", "Bonito"][i % 6]}-${i + 1}`,
+      `Well ${WELL_NAMES[i % WELL_NAMES.length] ?? "Marlin"}-${i + 1}`,
       Number(lat.toFixed(3)),
       Number(lon.toFixed(3)),
       lon < -92 ? "Western Gulf" : lon < -89.5 ? "Central Gulf" : "Eastern Gulf",
-      operators[i % operators.length],
+      operators[i % operators.length] ?? OP_MERIDIAN,
     ),
   );
 });
