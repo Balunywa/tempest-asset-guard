@@ -49,7 +49,7 @@ export function trackProximity(asset: Asset, event: WeatherEvent, maxHour = 120)
           distanceMi: d,
           hoursToImpact: s.hour,
           nearest: { ...s.base, hour: Math.round(s.hour) },
-          insideCone: d <= Math.min(Math.max(cone, 25), 140),
+          insideCone: d <= Math.min(Math.max(cone, 25), 60),
         };
       }
     }
@@ -68,7 +68,7 @@ export function trackProximity(asset: Asset, event: WeatherEvent, maxHour = 120)
 export function forecastWindAt(distanceMi: number, coreWindMph: number): number {
   const eyewall = 30;
   if (distanceMi <= eyewall) return coreWindMph;
-  const decay = Math.exp(-(distanceMi - eyewall) / 130);
+  const decay = Math.exp(-(distanceMi - eyewall) / 95);
   return Math.max(12, Math.round(coreWindMph * decay));
 }
 
@@ -107,7 +107,7 @@ export function scoreAsset(asset: Asset, event: WeatherEvent, horizonHours = 120
   const rain = forecastRainfallAt(prox.distanceMi, prox.nearest.category);
   const factors = [];
 
-  const distPoints = Math.round(Math.max(0, 26 * Math.exp(-prox.distanceMi / 95)));
+  const distPoints = Math.round(Math.max(0, 26 * Math.exp(-prox.distanceMi / 70)));
   factors.push({
     label: "Storm proximity",
     detail: `${Math.round(prox.distanceMi)} miles from the predicted storm centerline`,
