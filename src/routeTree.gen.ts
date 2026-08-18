@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as AssetsRouteImport } from './routes/assets'
 import { Route as CopilotRouteImport } from './routes/copilot'
+import { Route as DeploymentRouteImport } from './routes/deployment'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as RiskRouteImport } from './routes/risk'
@@ -36,6 +37,11 @@ const AssetsRoute = AssetsRouteImport.update({
 const CopilotRoute = CopilotRouteImport.update({
   id: '/copilot',
   path: '/copilot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeploymentRoute = DeploymentRouteImport.update({
+  id: '/deployment',
+  path: '/deployment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/alerts': typeof AlertsRoute
   '/assets': typeof AssetsRoute
   '/copilot': typeof CopilotRoute
+  '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
   '/risk': typeof RiskRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/alerts': typeof AlertsRoute
   '/assets': typeof AssetsRoute
   '/copilot': typeof CopilotRoute
+  '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
   '/risk': typeof RiskRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/alerts': typeof AlertsRoute
   '/assets': typeof AssetsRoute
   '/copilot': typeof CopilotRoute
+  '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
   '/risk': typeof RiskRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/assets'
     | '/copilot'
+    | '/deployment'
     | '/events'
     | '/map'
     | '/risk'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/assets'
     | '/copilot'
+    | '/deployment'
     | '/events'
     | '/map'
     | '/risk'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/assets'
     | '/copilot'
+    | '/deployment'
     | '/events'
     | '/map'
     | '/risk'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   AlertsRoute: typeof AlertsRoute
   AssetsRoute: typeof AssetsRoute
   CopilotRoute: typeof CopilotRoute
+  DeploymentRoute: typeof DeploymentRoute
   EventsRoute: typeof EventsRoute
   MapRoute: typeof MapRoute
   RiskRoute: typeof RiskRoute
@@ -162,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/copilot'
       fullPath: '/copilot'
       preLoaderRoute: typeof CopilotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deployment': {
+      id: '/deployment'
+      path: '/deployment'
+      fullPath: '/deployment'
+      preLoaderRoute: typeof DeploymentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   AlertsRoute: AlertsRoute,
   AssetsRoute: AssetsRoute,
   CopilotRoute: CopilotRoute,
+  DeploymentRoute: DeploymentRoute,
   EventsRoute: EventsRoute,
   MapRoute: MapRoute,
   RiskRoute: RiskRoute,
