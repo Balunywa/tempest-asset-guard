@@ -32,8 +32,8 @@ export function AssetDetailPanel({
   onSelect,
 }: {
   asset: Asset;
-  risk?: AssetRisk;
-  event?: WeatherEvent;
+  risk?: AssetRisk | undefined;
+  event?: WeatherEvent | undefined;
   allAssets: Asset[];
   onClose: () => void;
   onSelect?: (id: string) => void;

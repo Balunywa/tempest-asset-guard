@@ -16,11 +16,11 @@ export interface OpsMapProps {
   risks: Map<string, AssetRisk>;
   event: WeatherEvent;
   layers: LayerState;
-  selectedId?: string | null;
-  highlightIds?: string[];
-  hour?: number;
-  onSelect?: (id: string) => void;
-  className?: string;
+  selectedId?: string | null | undefined;
+  highlightIds?: string[] | undefined;
+  hour?: number | undefined;
+  onSelect?: ((id: string) => void) | undefined;
+  className?: string | undefined;
 }
 
 function interpolatePosition(event: WeatherEvent, hour: number) {
