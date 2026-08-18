@@ -32,7 +32,7 @@ function well(
     businessUnit: "Upstream",
     status: "producing",
     criticality: "standard",
-    metadata: { water_depth_ft: Math.round(400 + Math.random() * 4000), completion: "subsea tieback" },
+    metadata: { water_depth_ft: 400 + ((Number(id.slice(-3)) * 137) % 4000), completion: "subsea tieback" },
   };
 }
 
@@ -282,10 +282,20 @@ const WELL_NAMES = ["Marlin", "Cobia", "Tarpon", "Amberjack", "Wahoo", "Bonito"]
 
 // A field of synthetic wells fills out the estate to a realistic count.
 const wellSeeds: Array<[number, number]> = [];
+// Deterministic spread across the offshore shelf and onshore Gulf Coast fields.
 for (let i = 0; i < 169; i++) {
-  const lat = 25.9 + ((i * 37) % 100) / 100 * 3.9;
-  const lon = -95.4 + ((i * 53) % 100) / 100 * 7.6;
-  wellSeeds.push([lat, lon]);
+  const a = (i * 2.399963) % (Math.PI * 2);
+  const rad = Math.sqrt((i % 43) / 43);
+  const clusterIndex = i % 5;
+  const clusters: Array<[number, number, number]> = [
+    [27.6, -91.4, 1.6],
+    [28.6, -88.9, 1.3],
+    [27.2, -94.4, 1.5],
+    [30.6, -95.6, 1.8],
+    [31.4, -92.4, 1.7],
+  ];
+  const c = clusters[clusterIndex]!;
+  wellSeeds.push([c[0] + Math.sin(a) * rad * c[2], c[1] + Math.cos(a) * rad * c[2] * 1.4]);
 }
 wellSeeds.forEach(([lat, lon], i) => {
   sampleAssets.push(
