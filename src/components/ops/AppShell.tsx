@@ -66,7 +66,9 @@ export function AppShell({
     <div
       className={cn(
         "flex bg-background text-foreground",
-        fullHeight ? "h-screen overflow-hidden" : "min-h-screen",
+        // Fixed-viewport command center only above xl; below that the page
+        // scrolls so dense panes aren't crushed on laptops and tablets.
+        fullHeight ? "min-h-screen xl:h-screen xl:overflow-hidden" : "min-h-screen",
       )}
     >
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r bg-sidebar lg:flex">
@@ -150,7 +152,7 @@ export function AppShell({
             </div>
           </div>
         </header>
-        <main className={cn("min-w-0 flex-1", fullHeight && "min-h-0 overflow-hidden")}>{children}</main>
+        <main className={cn("min-w-0 flex-1", fullHeight && "xl:min-h-0 xl:overflow-hidden")}>{children}</main>
       </div>
     </div>
   );
