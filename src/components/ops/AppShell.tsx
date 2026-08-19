@@ -101,9 +101,10 @@ export function AppShell({
         </div>
         <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
           {NAV.map((item) => {
-            const active = item.to === "/" ? path === "/" : path.startsWith(item.to);
+            const target = href(item.to);
+            const active = item.to === "/" ? path === target || path === `${target}/` : path.startsWith(target);
             return (
-              <Link
+              <OpsLink
                 key={item.to}
                 to={item.to}
                 className={cn(
