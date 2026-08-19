@@ -16,6 +16,7 @@ import { Route as CopilotRouteImport } from './routes/copilot'
 import { Route as DeploymentRouteImport } from './routes/deployment'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as PostureRouteImport } from './routes/posture'
 import { Route as RiskRouteImport } from './routes/risk'
 import { Route as TimelineRouteImport } from './routes/timeline'
 
@@ -54,6 +55,11 @@ const MapRoute = MapRouteImport.update({
   path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PostureRoute = PostureRouteImport.update({
+  id: '/posture',
+  path: '/posture',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RiskRoute = RiskRouteImport.update({
   id: '/risk',
   path: '/risk',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
+  '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
   '/timeline': typeof TimelineRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
+  '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
   '/timeline': typeof TimelineRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
+  '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
   '/timeline': typeof TimelineRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/deployment'
     | '/events'
     | '/map'
+    | '/posture'
     | '/risk'
     | '/timeline'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/deployment'
     | '/events'
     | '/map'
+    | '/posture'
     | '/risk'
     | '/timeline'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/deployment'
     | '/events'
     | '/map'
+    | '/posture'
     | '/risk'
     | '/timeline'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   DeploymentRoute: typeof DeploymentRoute
   EventsRoute: typeof EventsRoute
   MapRoute: typeof MapRoute
+  PostureRoute: typeof PostureRoute
   RiskRoute: typeof RiskRoute
   TimelineRoute: typeof TimelineRoute
 }
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/posture': {
+      id: '/posture'
+      path: '/posture'
+      fullPath: '/posture'
+      preLoaderRoute: typeof PostureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/risk': {
       id: '/risk'
       path: '/risk'
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   DeploymentRoute: DeploymentRoute,
   EventsRoute: EventsRoute,
   MapRoute: MapRoute,
+  PostureRoute: PostureRoute,
   RiskRoute: RiskRoute,
   TimelineRoute: TimelineRoute,
 }
