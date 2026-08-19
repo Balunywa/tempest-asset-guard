@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as AssetsRouteImport } from './routes/assets'
 import { Route as CopilotRouteImport } from './routes/copilot'
@@ -46,6 +47,10 @@ import { Route as AuthenticatedAppTimelineRouteImport } from './routes/_authenti
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AlertsRoute = AlertsRouteImport.update({
@@ -154,62 +159,62 @@ const DemoTimelineRoute = DemoTimelineRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
-  id: '/_authenticated/app/',
+  id: '/app/',
   path: '/app/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppAlertsRoute = AuthenticatedAppAlertsRouteImport.update({
-  id: '/_authenticated/app/alerts',
+  id: '/app/alerts',
   path: '/app/alerts',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppAssetsRoute = AuthenticatedAppAssetsRouteImport.update({
-  id: '/_authenticated/app/assets',
+  id: '/app/assets',
   path: '/app/assets',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppCopilotRoute = AuthenticatedAppCopilotRouteImport.update({
-  id: '/_authenticated/app/copilot',
+  id: '/app/copilot',
   path: '/app/copilot',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppDeploymentRoute =
   AuthenticatedAppDeploymentRouteImport.update({
-    id: '/_authenticated/app/deployment',
+    id: '/app/deployment',
     path: '/app/deployment',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppEventsRoute = AuthenticatedAppEventsRouteImport.update({
-  id: '/_authenticated/app/events',
+  id: '/app/events',
   path: '/app/events',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppMapRoute = AuthenticatedAppMapRouteImport.update({
-  id: '/_authenticated/app/map',
+  id: '/app/map',
   path: '/app/map',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppPostureRoute = AuthenticatedAppPostureRouteImport.update({
-  id: '/_authenticated/app/posture',
+  id: '/app/posture',
   path: '/app/posture',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppRiskRoute = AuthenticatedAppRiskRouteImport.update({
-  id: '/_authenticated/app/risk',
+  id: '/app/risk',
   path: '/app/risk',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppThresholdsRoute =
   AuthenticatedAppThresholdsRouteImport.update({
-    id: '/_authenticated/app/thresholds',
+    id: '/app/thresholds',
     path: '/app/thresholds',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppTimelineRoute =
   AuthenticatedAppTimelineRouteImport.update({
-    id: '/_authenticated/app/timeline',
+    id: '/app/timeline',
     path: '/app/timeline',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -285,6 +290,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/alerts': typeof AlertsRoute
   '/assets': typeof AssetsRoute
   '/copilot': typeof CopilotRoute
@@ -392,6 +398,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/alerts'
     | '/assets'
     | '/copilot'
@@ -428,6 +435,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AlertsRoute: typeof AlertsRoute
   AssetsRoute: typeof AssetsRoute
   CopilotRoute: typeof CopilotRoute
@@ -449,17 +457,6 @@ export interface RootRouteChildren {
   DemoThresholdsRoute: typeof DemoThresholdsRoute
   DemoTimelineRoute: typeof DemoTimelineRoute
   DemoIndexRoute: typeof DemoIndexRoute
-  AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
-  AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRoute
-  AuthenticatedAppCopilotRoute: typeof AuthenticatedAppCopilotRoute
-  AuthenticatedAppDeploymentRoute: typeof AuthenticatedAppDeploymentRoute
-  AuthenticatedAppEventsRoute: typeof AuthenticatedAppEventsRoute
-  AuthenticatedAppMapRoute: typeof AuthenticatedAppMapRoute
-  AuthenticatedAppPostureRoute: typeof AuthenticatedAppPostureRoute
-  AuthenticatedAppRiskRoute: typeof AuthenticatedAppRiskRoute
-  AuthenticatedAppThresholdsRoute: typeof AuthenticatedAppThresholdsRoute
-  AuthenticatedAppTimelineRoute: typeof AuthenticatedAppTimelineRoute
-  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -469,6 +466,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/alerts': {
@@ -623,83 +627,115 @@ declare module '@tanstack/react-router' {
       path: '/app'
       fullPath: '/app/'
       preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/alerts': {
       id: '/_authenticated/app/alerts'
       path: '/app/alerts'
       fullPath: '/app/alerts'
       preLoaderRoute: typeof AuthenticatedAppAlertsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/assets': {
       id: '/_authenticated/app/assets'
       path: '/app/assets'
       fullPath: '/app/assets'
       preLoaderRoute: typeof AuthenticatedAppAssetsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/copilot': {
       id: '/_authenticated/app/copilot'
       path: '/app/copilot'
       fullPath: '/app/copilot'
       preLoaderRoute: typeof AuthenticatedAppCopilotRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/deployment': {
       id: '/_authenticated/app/deployment'
       path: '/app/deployment'
       fullPath: '/app/deployment'
       preLoaderRoute: typeof AuthenticatedAppDeploymentRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/events': {
       id: '/_authenticated/app/events'
       path: '/app/events'
       fullPath: '/app/events'
       preLoaderRoute: typeof AuthenticatedAppEventsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/map': {
       id: '/_authenticated/app/map'
       path: '/app/map'
       fullPath: '/app/map'
       preLoaderRoute: typeof AuthenticatedAppMapRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/posture': {
       id: '/_authenticated/app/posture'
       path: '/app/posture'
       fullPath: '/app/posture'
       preLoaderRoute: typeof AuthenticatedAppPostureRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/risk': {
       id: '/_authenticated/app/risk'
       path: '/app/risk'
       fullPath: '/app/risk'
       preLoaderRoute: typeof AuthenticatedAppRiskRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/thresholds': {
       id: '/_authenticated/app/thresholds'
       path: '/app/thresholds'
       fullPath: '/app/thresholds'
       preLoaderRoute: typeof AuthenticatedAppThresholdsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/timeline': {
       id: '/_authenticated/app/timeline'
       path: '/app/timeline'
       fullPath: '/app/timeline'
       preLoaderRoute: typeof AuthenticatedAppTimelineRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
+  AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRoute
+  AuthenticatedAppCopilotRoute: typeof AuthenticatedAppCopilotRoute
+  AuthenticatedAppDeploymentRoute: typeof AuthenticatedAppDeploymentRoute
+  AuthenticatedAppEventsRoute: typeof AuthenticatedAppEventsRoute
+  AuthenticatedAppMapRoute: typeof AuthenticatedAppMapRoute
+  AuthenticatedAppPostureRoute: typeof AuthenticatedAppPostureRoute
+  AuthenticatedAppRiskRoute: typeof AuthenticatedAppRiskRoute
+  AuthenticatedAppThresholdsRoute: typeof AuthenticatedAppThresholdsRoute
+  AuthenticatedAppTimelineRoute: typeof AuthenticatedAppTimelineRoute
+  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
+  AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRoute,
+  AuthenticatedAppCopilotRoute: AuthenticatedAppCopilotRoute,
+  AuthenticatedAppDeploymentRoute: AuthenticatedAppDeploymentRoute,
+  AuthenticatedAppEventsRoute: AuthenticatedAppEventsRoute,
+  AuthenticatedAppMapRoute: AuthenticatedAppMapRoute,
+  AuthenticatedAppPostureRoute: AuthenticatedAppPostureRoute,
+  AuthenticatedAppRiskRoute: AuthenticatedAppRiskRoute,
+  AuthenticatedAppThresholdsRoute: AuthenticatedAppThresholdsRoute,
+  AuthenticatedAppTimelineRoute: AuthenticatedAppTimelineRoute,
+  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AlertsRoute: AlertsRoute,
   AssetsRoute: AssetsRoute,
   CopilotRoute: CopilotRoute,
@@ -721,17 +757,6 @@ const rootRouteChildren: RootRouteChildren = {
   DemoThresholdsRoute: DemoThresholdsRoute,
   DemoTimelineRoute: DemoTimelineRoute,
   DemoIndexRoute: DemoIndexRoute,
-  AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
-  AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRoute,
-  AuthenticatedAppCopilotRoute: AuthenticatedAppCopilotRoute,
-  AuthenticatedAppDeploymentRoute: AuthenticatedAppDeploymentRoute,
-  AuthenticatedAppEventsRoute: AuthenticatedAppEventsRoute,
-  AuthenticatedAppMapRoute: AuthenticatedAppMapRoute,
-  AuthenticatedAppPostureRoute: AuthenticatedAppPostureRoute,
-  AuthenticatedAppRiskRoute: AuthenticatedAppRiskRoute,
-  AuthenticatedAppThresholdsRoute: AuthenticatedAppThresholdsRoute,
-  AuthenticatedAppTimelineRoute: AuthenticatedAppTimelineRoute,
-  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
