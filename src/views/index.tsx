@@ -315,7 +315,7 @@ export function OverviewPage() {
                     <Sparkles className="size-3.5 text-primary" /> Operational summary
                   </div>
                   <p className="text-xs leading-relaxed">
-                    {event?.name} is forecast to enter the central Gulf within 48 hours.{" "}
+                    {event?.name} is forecast to reach the operating area within 48 hours.{" "}
                     <strong>{metrics.insideCone} facilities</strong> sit inside the projected corridor and{" "}
                     <strong>{metrics.exposed} assets</strong> carry elevated risk or higher.{" "}
                     <strong>{breaches.length} configured thresholds</strong> are breached this cycle, with first

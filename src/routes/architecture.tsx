@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Card, Section, SiteChrome, SiteHero } from "@/components/site/SiteChrome";
 
-const TITLE = "Azure Reference Architecture | Gulf Asset Weather Risk";
+const TITLE = "Azure Reference Architecture | Weather & Asset Risk";
 const DESC =
   "Adapter-based Azure architecture: Planetary Computer Pro for geospatial data, Azure Maps for basemaps, AI Foundry for grounded summaries, and Aurora/ECMWF weather models.";
 

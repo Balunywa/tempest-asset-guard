@@ -11,13 +11,13 @@ export const Route = createFileRoute("/auth")({
     typeof search["redirect"] === "string" ? { redirect: search["redirect"] } : {},
   head: () => ({
     meta: [
-      { title: "Sign in | Gulf Asset Weather Risk" },
+      { title: "Sign in | Weather & Asset Risk" },
       {
         name: "description",
         content:
           "Sign in with Microsoft Entra ID to open your tenant's hurricane and asset risk operations console.",
       },
-      { property: "og:title", content: "Sign in | Gulf Asset Weather Risk" },
+      { property: "og:title", content: "Sign in | Weather & Asset Risk" },
       { property: "og:description", content: "Microsoft Entra ID single sign-on for operations teams." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -131,7 +131,7 @@ function AuthPage() {
           <Link to="/demo" className="text-primary hover:underline">
             Explore the open demo
           </Link>{" "}
-          — no sign-in, synthetic Gulf data.
+          — no sign-in, synthetic sample data.
         </p>
       </div>
 
@@ -139,7 +139,7 @@ function AuthPage() {
         <div className="w-full max-w-sm">
           <h1 className="text-xl font-semibold tracking-tight">Sign in</h1>
           <p className="mt-1 text-xs text-muted-foreground">
-            Operations console for your Gulf of Mexico asset estate.
+            Operations console for your asset estate.
           </p>
 
           <button
