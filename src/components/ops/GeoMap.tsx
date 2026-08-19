@@ -146,6 +146,9 @@ export default function GeoMap({
   const [hovered, setHovered] = useState<{ asset: Asset; x: number; y: number } | null>(null);
 
   const satellite = !!layers["satellite"];
+  const [basemap, setBasemap] = useState<BasemapId>("dark");
+  // the satellite layer toggle always wins over the manual basemap picker
+  const activeBasemap: BasemapId = satellite ? "satellite" : basemap;
   const selectRef = useRef(onSelect);
   selectRef.current = onSelect;
   const assetsRef = useRef(assets);
