@@ -548,17 +548,29 @@ export default function GeoMap({
     }
   }, []);
 
+  const [styleVersion, setStyleVersion] = useState(0);
+
   useEffect(() => {
     if (ready) buildLayers();
   }, [ready, buildLayers]);
 
-  // basemap swap keeps operational layers intact
+  // basemap swap re-adds the operational layers on top of the new style
+  const lastBasemap = useRef<string | null>(null);
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-    map.setStyle(basemapStyle(satellite ? "satellite" : "dark"));
-    const onStyle = () => buildLayers();
-    map.once("styledata", onStyle);
+    const next = satellite ? "satellite" : "dark";
+    if (lastBasemap.current === null) {
+      lastBasemap.current = next;
+      return;
+    }
+    if (lastBasemap.current === next) return;
+    lastBasemap.current = next;
+    map.setStyle(basemapStyle(next));
+    map.once("styledata", () => {
+      buildLayers();
+      setStyleVersion((v) => v + 1);
+    });
   }, [satellite, ready, buildLayers]);
 
   // ------------------------------------------------------------ data sync
@@ -579,7 +591,18 @@ export default function GeoMap({
     set("rain", rainData, !!layers["rain"]);
     set("flood", floodData, !!layers["flood"]);
     set("storm-center", centerData, true);
-  }, [ready, layers, assetPoints, pipelineLines, trackData, windData, rainData, floodData, centerData]);
+  }, [
+    ready,
+    styleVersion,
+    layers,
+    assetPoints,
+    pipelineLines,
+    trackData,
+    windData,
+    rainData,
+    floodData,
+    centerData,
+  ]);
 
   // fly to selection
   useEffect(() => {
