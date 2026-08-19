@@ -97,6 +97,29 @@ function markerPath(type: Asset["type"], size: number): string {
   }
 }
 
+/** NHC-style asymmetric wind-radii polygon from NE/SE/SW/NW radii (px). */
+function quadrantPath(cx: number, cy: number, q: number[]): string {
+  const [ne, se, sw, nw] = q;
+  const arc = (r: number, a0: number, a1: number) => {
+    const steps = 10;
+    let d = "";
+    for (let i = 1; i <= steps; i++) {
+      const a = a0 + ((a1 - a0) * i) / steps;
+      d += `L${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`;
+    }
+    return d;
+  };
+  const H = Math.PI / 2;
+  return (
+    `M${cx.toFixed(1)},${(cy - ne).toFixed(1)}` +
+    arc(ne, -H, 0) +
+    arc(se, 0, H) +
+    arc(sw, H, 2 * H) +
+    arc(nw, 2 * H, 3 * H) +
+    "Z"
+  );
+}
+
 const RISK_RANK: Record<string, number> = {
   normal: 0,
   monitor: 1,
@@ -242,10 +265,11 @@ export function OpsMap({
   const windRadii = useMemo(() => {
     const scale = pos.windMph / 130;
     return [
-      { kt: 34, mi: 205 * scale, opacity: 0.09 },
-      { kt: 50, mi: 125 * scale, opacity: 0.12 },
-      { kt: 64, mi: 68 * scale, opacity: 0.18 },
-    ].filter((r) => r.mi > 4);
+      // NE, SE, SW, NW quadrant radii (mi) — right-front quadrant runs largest.
+      { kt: 34, quad: [205, 180, 140, 155].map((m) => m * scale), opacity: 0.09, color: "var(--cat1)" },
+      { kt: 50, quad: [125, 105, 78, 92].map((m) => m * scale), opacity: 0.12, color: "var(--cat3)" },
+      { kt: 64, quad: [68, 58, 40, 48].map((m) => m * scale), opacity: 0.18, color: "var(--cat5)" },
+    ].filter((r) => r.quad[0] > 4);
   }, [pos.windMph]);
 
   const labelZoom = zoom;
@@ -492,15 +516,16 @@ export function OpsMap({
                   d={historyPath}
                   fill="none"
                   stroke="var(--color-muted-foreground)"
-                  strokeWidth={1.8 * strokeScale}
-                  strokeDasharray="4 4"
+                  strokeWidth={2 * strokeScale}
+                  strokeLinecap="round"
                 />
                 <path
                   d={trackPath}
                   fill="none"
                   stroke="var(--color-track)"
-                  strokeWidth={2.2 * strokeScale}
+                  strokeWidth={2.4 * strokeScale}
                   strokeLinecap="round"
+                  strokeDasharray={`${9 * strokeScale} ${6 * strokeScale}`}
                 />
                 {event.forecast.map((p) => {
                   const [x, y] = project(p.lon, p.lat, v);
@@ -544,25 +569,22 @@ export function OpsMap({
               <g pointerEvents="none">
                 {windRadii.map((r) => (
                   <g key={r.kt}>
-                    <ellipse
-                      cx={sx + milesToPx(r.mi * 0.16, v)}
-                      cy={sy - milesToPx(r.mi * 0.1, v)}
-                      rx={milesToPx(r.mi, v)}
-                      ry={milesToPx(r.mi * 0.86, v)}
-                      fill="var(--color-storm)"
+                    <path
+                      d={quadrantPath(sx, sy, r.quad.map((mi) => milesToPx(mi, v)) as number[])}
+                      fill={r.color}
                       fillOpacity={r.opacity}
-                      stroke="var(--color-storm)"
-                      strokeOpacity="0.45"
-                      strokeWidth={0.8 * strokeScale}
+                      stroke={r.color}
+                      strokeOpacity="0.5"
+                      strokeWidth={0.9 * strokeScale}
                     />
                     <text
-                      x={sx + milesToPx(r.mi * 0.16, v)}
-                      y={sy - milesToPx(r.mi * 0.86, v) - 4 * strokeScale}
+                      x={sx}
+                      y={sy - milesToPx(r.quad[3], v) - 4 * strokeScale}
                       fontSize={9 * strokeScale}
                       textAnchor="middle"
                       className="num"
-                      fill="var(--color-storm)"
-                      opacity="0.85"
+                      fill={r.color}
+                      opacity="0.9"
                     >
                       {r.kt} kt
                     </text>
