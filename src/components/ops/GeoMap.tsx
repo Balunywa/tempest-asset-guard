@@ -300,10 +300,13 @@ export default function GeoMap({
   }, [assets]);
 
   // ------------------------------------------------------------- map set-up
+  const userMovedRef = useRef(false);
+
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
+    const container = containerRef.current;
     const map = new maplibregl.Map({
-      container: containerRef.current,
+      container,
       style: basemapStyle(satellite ? "satellite" : "dark"),
       bounds: GULF_BOUNDS,
       fitBoundsOptions: { padding: 24 },
@@ -319,15 +322,38 @@ export default function GeoMap({
     map.on("move", () => setZoomLevel(map.getZoom()));
     map.on("mousemove", (e: maplibregl.MapMouseEvent) => setCursor({ lon: e.lngLat.lng, lat: e.lngLat.lat }));
     map.on("mouseout", () => setCursor(null));
-    map.on("load", () => setReady(true));
+    map.on("load", () => {
+      setReady(true);
+      // the container may have been zero-sized or mid-layout at construction,
+      // which leaves the initial fit pointing somewhere other than the Gulf.
+      map.resize();
+      if (!userMovedRef.current) map.fitBounds(GULF_BOUNDS, { padding: 24, animate: false });
+    });
+
+    // any user-initiated pan/zoom stops the automatic refit
+    const markMoved = () => (userMovedRef.current = true);
+    map.on("dragstart", markMoved);
+    map.on("wheel", markMoved);
+    map.on("boxzoomstart", markMoved);
+
+    // keep the Gulf framed when the panel resizes (breakpoint change, sidebar
+    // open/close, window resize) until the operator takes control of the view.
+    const ro = new ResizeObserver(() => {
+      if (!mapRef.current) return;
+      map.resize();
+      if (!userMovedRef.current) map.fitBounds(GULF_BOUNDS, { padding: 24, animate: false });
+    });
+    ro.observe(container);
 
     return () => {
+      ro.disconnect();
       map.remove();
       mapRef.current = null;
       setReady(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   /** (Re)build every operational layer — also runs after a basemap style swap. */
   const buildLayers = useCallback(() => {
