@@ -591,6 +591,7 @@ export default function GeoMap({
     set("rain", rainData, !!layers["rain"]);
     set("flood", floodData, !!layers["flood"]);
     set("storm-center", centerData, true);
+    console.log("ops: sync", assetPoints.features.length, !!layers["assets"], !!map.getSource("assets"));
   }, [
     ready,
     styleVersion,
