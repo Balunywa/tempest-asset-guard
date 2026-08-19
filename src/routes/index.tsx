@@ -40,7 +40,7 @@ function LandingPage() {
             Hurricane decisions for your offshore estate, ranked by asset and ready before the next cycle.
           </h1>
           <p className="mt-5 max-w-2xl text-base text-muted-foreground">
-            Weather and asset impact intelligence for critical infrastructure. The accelerator joins tropical forecasts
+            Weather and asset impact intelligence for critical infrastructure. The accelerator joins severe weather forecasts
             to your platforms, wells, pipelines and terminals, and turns them into an explainable exposure
             score, a response posture board and an alert queue your storm calls can actually run on.
           </p>
