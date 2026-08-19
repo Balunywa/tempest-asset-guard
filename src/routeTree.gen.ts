@@ -22,6 +22,7 @@ import { Route as PostureRouteImport } from './routes/posture'
 import { Route as RiskRouteImport } from './routes/risk'
 import { Route as ThresholdsRouteImport } from './routes/thresholds'
 import { Route as TimelineRouteImport } from './routes/timeline'
+import { Route as AuthCallbackRouteImport } from './routes/auth_.callback'
 import { Route as DemoIndexRouteImport } from './routes/demo.index'
 import { Route as DemoAlertsRouteImport } from './routes/demo.alerts'
 import { Route as DemoAssetsRouteImport } from './routes/demo.assets'
@@ -107,6 +108,11 @@ const ThresholdsRoute = ThresholdsRouteImport.update({
 const TimelineRoute = TimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth_/callback',
+  path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoIndexRoute = DemoIndexRouteImport.update({
@@ -236,6 +242,7 @@ export interface FileRoutesByFullPath {
   '/risk': typeof RiskRoute
   '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/demo/alerts': typeof DemoAlertsRoute
   '/demo/assets': typeof DemoAssetsRoute
   '/demo/copilot': typeof DemoCopilotRoute
@@ -272,6 +279,7 @@ export interface FileRoutesByTo {
   '/risk': typeof RiskRoute
   '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/demo/alerts': typeof DemoAlertsRoute
   '/demo/assets': typeof DemoAssetsRoute
   '/demo/copilot': typeof DemoCopilotRoute
@@ -310,6 +318,7 @@ export interface FileRoutesById {
   '/risk': typeof RiskRoute
   '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
+  '/auth_/callback': typeof AuthCallbackRoute
   '/demo/alerts': typeof DemoAlertsRoute
   '/demo/assets': typeof DemoAssetsRoute
   '/demo/copilot': typeof DemoCopilotRoute
@@ -348,6 +357,7 @@ export interface FileRouteTypes {
     | '/risk'
     | '/thresholds'
     | '/timeline'
+    | '/auth/callback'
     | '/demo/alerts'
     | '/demo/assets'
     | '/demo/copilot'
@@ -384,6 +394,7 @@ export interface FileRouteTypes {
     | '/risk'
     | '/thresholds'
     | '/timeline'
+    | '/auth/callback'
     | '/demo/alerts'
     | '/demo/assets'
     | '/demo/copilot'
@@ -421,6 +432,7 @@ export interface FileRouteTypes {
     | '/risk'
     | '/thresholds'
     | '/timeline'
+    | '/auth_/callback'
     | '/demo/alerts'
     | '/demo/assets'
     | '/demo/copilot'
@@ -459,6 +471,7 @@ export interface RootRouteChildren {
   RiskRoute: typeof RiskRoute
   ThresholdsRoute: typeof ThresholdsRoute
   TimelineRoute: typeof TimelineRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   DemoAlertsRoute: typeof DemoAlertsRoute
   DemoAssetsRoute: typeof DemoAssetsRoute
   DemoCopilotRoute: typeof DemoCopilotRoute
@@ -563,6 +576,13 @@ declare module '@tanstack/react-router' {
       path: '/timeline'
       fullPath: '/timeline'
       preLoaderRoute: typeof TimelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth_/callback': {
+      id: '/auth_/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/': {
@@ -767,6 +787,7 @@ const rootRouteChildren: RootRouteChildren = {
   RiskRoute: RiskRoute,
   ThresholdsRoute: ThresholdsRoute,
   TimelineRoute: TimelineRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   DemoAlertsRoute: DemoAlertsRoute,
   DemoAssetsRoute: DemoAssetsRoute,
   DemoCopilotRoute: DemoCopilotRoute,
