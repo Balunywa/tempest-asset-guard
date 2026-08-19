@@ -1,14 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowRight, Filter, Sparkles, TrendingUp, X } from "lucide-react";
 
 import { AppShell } from "@/components/ops/AppShell";
 import { OpsMap } from "@/components/ops/OpsMap";
 import { AssetDetailPanel } from "@/components/ops/AssetDetailPanel";
 import { RiskBadge, StatCell } from "@/components/ops/RiskBadge";
-import { alertsQuery, useOpsSnapshot } from "@/lib/hooks/use-ops-data";
-import { ASSET_TYPE_LABEL, relativeTime, riskColorVar } from "@/lib/format";
+import {
+  alertsQuery,
+  postureQuery,
+  thresholdRulesQuery,
+  useOpsSnapshot,
+} from "@/lib/hooks/use-ops-data";
+import { POSTURE_LEVEL_LABEL } from "@/lib/services/posture";
+import { evaluateRules } from "@/lib/services/thresholds";
+import { ASSET_TYPE_LABEL, RISK_LABEL, relativeTime, riskColorVar } from "@/lib/format";
+import type { AssetType, PostureLevel, RiskLevel } from "@/lib/domain/types";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,212 +33,423 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Live hurricane and asset exposure intelligence for oil & gas operations teams.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: OverviewPage,
 });
 
+const LEVEL_FILTERS: RiskLevel[] = ["critical", "high", "elevated", "monitor"];
+const TYPE_FILTERS: AssetType[] = ["offshore_platform", "pipeline", "well", "refinery", "lng_terminal", "port"];
+
+const POSTURE_TONE: Record<PostureLevel, RiskLevel> = {
+  0: "normal",
+  1: "monitor",
+  2: "elevated",
+  3: "high",
+  4: "critical",
+};
+
+function Chip({
+  active,
+  onClick,
+  children,
+  color,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  color?: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "rounded-sm border px-2 py-1 text-[11px] whitespace-nowrap transition-colors",
+        active ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/60",
+      )}
+      style={active && color ? { borderColor: color, color } : undefined}
+    >
+      {children}
+    </button>
+  );
+}
+
 function OverviewPage() {
   const { assets, risks, riskMap, event, metrics } = useOpsSnapshot(72);
-  const alerts = useQuery(alertsQuery);
+  const alerts = useQuery(alertsQuery).data ?? [];
+  const postures = useQuery(postureQuery).data ?? [];
+  const rules = useQuery(thresholdRulesQuery).data ?? [];
+
   const [selected, setSelected] = useState<string | null>(null);
-  const selectedAsset = assets.find((a) => a.id === selected) ?? null;
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [levelFilter, setLevelFilter] = useState<Set<RiskLevel>>(new Set());
+  const [typeFilter, setTypeFilter] = useState<Set<AssetType>>(new Set());
+  const [coneOnly, setConeOnly] = useState(false);
 
-  const ranked = [...risks].sort((a, b) => b.score - a.score).slice(0, 8);
-  const nameOf = (id: string) => assets.find((a) => a.id === id)?.name ?? id;
+  const toggle = <T,>(set: Set<T>, v: T): Set<T> => {
+    const next = new Set(set);
+    if (next.has(v)) next.delete(v);
+    else next.add(v);
+    return next;
+  };
+  const filtersActive = levelFilter.size > 0 || typeFilter.size > 0 || coneOnly;
+  const clearFilters = () => {
+    setLevelFilter(new Set());
+    setTypeFilter(new Set());
+    setConeOnly(false);
+  };
 
-  const timeline = [24, 48, 72].map((h) => ({
-    hour: h,
-    exposed: risks.filter((r) => (r.hoursToImpact ?? 999) <= h && r.score >= 42).length,
-    critical: risks.filter((r) => (r.hoursToImpact ?? 999) <= h && r.level === "critical").length,
+  /** One filter predicate feeds both the map and every table on the page. */
+  const filteredAssets = useMemo(
+    () =>
+      assets.filter((a) => {
+        const r = riskMap.get(a.id);
+        if (typeFilter.size && !typeFilter.has(a.type)) return false;
+        if (levelFilter.size && !(r && levelFilter.has(r.level))) return false;
+        if (coneOnly && !r?.insideCone) return false;
+        return true;
+      }),
+    [assets, riskMap, typeFilter, levelFilter, coneOnly],
+  );
+  const filteredIds = useMemo(() => new Set(filteredAssets.map((a) => a.id)), [filteredAssets]);
+
+  const ranked = useMemo(
+    () => risks.filter((r) => filteredIds.has(r.assetId)).sort((a, b) => b.score - a.score),
+    [risks, filteredIds],
+  );
+
+  const postureById = useMemo(() => new Map(postures.map((p) => [p.assetId, p])), [postures]);
+  const assetById = useMemo(() => new Map(assets.map((a) => [a.id, a])), [assets]);
+  const selectedAsset = selected ? (assetById.get(selected) ?? null) : null;
+
+  const breaches = useMemo(() => evaluateRules(rules, assets, risks), [rules, assets, risks]);
+  const breachCritical = breaches.filter((b) => b.severity === "critical").length;
+
+  const postureRollup = ([4, 3, 2] as PostureLevel[]).map((lvl) => ({
+    lvl,
+    n: postures.filter((p) => p.level === lvl && filteredIds.has(p.assetId)).length,
   }));
+  const pob = postures
+    .filter((p) => filteredIds.has(p.assetId))
+    .reduce(
+      (acc, p) => ({ current: acc.current + (p.pobCurrent ?? 0), normal: acc.normal + (p.pobNormal ?? 0) }),
+      { current: 0, normal: 0 },
+    );
+
+  const openAlerts = alerts.filter((a) => a.status !== "resolved");
 
   return (
-    <AppShell>
-      <div className="border-b bg-surface">
-        <div className="flex flex-wrap items-center justify-between gap-3 px-5 pt-4">
-          <div>
-            <h1 className="text-lg font-semibold tracking-tight">
-              {event?.name ?? "No active event"} — 72 hour outlook
-            </h1>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {event?.status} · moving {Math.round(event?.movementMph ?? 0)} mph · 72-hour forecast updated{" "}
-              {event ? relativeTime(event.updatedAtIso) : "—"}
-            </p>
-          </div>
-          <Link
-            to="/copilot"
-            className="inline-flex items-center gap-2 rounded-sm border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/15"
-          >
-            <Sparkles className="size-3.5" /> Ask the operations assistant
-          </Link>
-        </div>
-        <div className="mt-3 grid grid-cols-2 border-t md:grid-cols-3 xl:grid-cols-6">
-          <StatCell label="Assets monitored" value={metrics.monitored} sub="Across 4 business units" />
-          <StatCell label="Assets exposed" value={metrics.exposed} sub="Elevated risk or higher" />
-          <StatCell label="Inside forecast cone" value={metrics.insideCone} sub="Projected impact corridor" />
-          <StatCell label="High risk" value={metrics.high} tone="high" sub="Score 62–79" />
-          <StatCell label="Critical" value={metrics.critical} tone="critical" sub="Score 80+" />
-          <StatCell
-            label="First expected impact"
-            value={metrics.firstImpactHours === null ? "—" : `${metrics.firstImpactHours} h`}
-            sub="Earliest asset onset"
-          />
-        </div>
-      </div>
-
-      <div className="grid gap-4 p-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="space-y-4">
-          <div className="panel overflow-hidden">
-            <div className="flex items-center justify-between border-b px-4 py-2.5">
-              <div className="label-xs">Operational picture — Gulf of Mexico</div>
-              <Link to="/map" className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline">
-                Open full map <ArrowRight className="size-3" />
+    <AppShell fullHeight>
+      <div className="flex h-full min-h-0 flex-col">
+        {/* Metric strip */}
+        <div className="shrink-0 border-b bg-surface">
+          <div className="flex flex-wrap items-center justify-between gap-3 px-5 pt-3">
+            <div>
+              <h1 className="text-base font-semibold tracking-tight">
+                {event?.name ?? "No active event"} — 72 hour outlook
+              </h1>
+              <p className="num mt-0.5 text-[11px] text-muted-foreground">
+                {event?.status} · moving {Math.round(event?.movementMph ?? 0)} mph ·{" "}
+                {event?.cycleId ?? "current cycle"} updated {event ? relativeTime(event.updatedAtIso) : "—"}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {event?.cycleShift && (
+                <span className="num inline-flex items-center gap-1.5 rounded-sm border border-risk-high/40 bg-risk-high/10 px-2 py-1 text-[11px] text-risk-high">
+                  <TrendingUp className="size-3.5" />
+                  {event.cycleShift.shiftMi} mi {event.cycleShift.shiftDirection} since{" "}
+                  {event.cycleShift.previousCycle}
+                </span>
+              )}
+              <Link
+                to="/copilot"
+                className="inline-flex items-center gap-2 rounded-sm border border-primary/40 bg-primary/10 px-2.5 py-1.5 text-[11px] font-medium text-primary hover:bg-primary/15"
+              >
+                <Sparkles className="size-3.5" /> Operations assistant
               </Link>
             </div>
-            <div className="relative h-[440px]">
+          </div>
+          <div className="mt-2.5 grid grid-cols-3 border-t xl:grid-cols-7">
+            <StatCell label="Assets monitored" value={metrics.monitored} sub="Across 4 business units" />
+            <StatCell label="Assets exposed" value={metrics.exposed} sub="Elevated risk or higher" />
+            <StatCell label="Inside forecast cone" value={metrics.insideCone} sub="Projected impact corridor" />
+            <StatCell label="High risk" value={metrics.high} tone="high" sub="Score 62–79" />
+            <StatCell label="Critical" value={metrics.critical} tone="critical" sub="Score 80+" />
+            <StatCell
+              label="Threshold breaches"
+              value={breaches.length}
+              tone={breachCritical > 0 ? "critical" : "high"}
+              sub={`${breachCritical} at critical severity`}
+            />
+            <StatCell
+              label="First expected impact"
+              value={metrics.firstImpactHours === null ? "—" : `${metrics.firstImpactHours} h`}
+              sub="Earliest asset onset"
+            />
+          </div>
+        </div>
+
+        {/* Filter bar — drives the map and every table below */}
+        <div className="flex shrink-0 flex-wrap items-center gap-1.5 border-b bg-panel px-4 py-2">
+          <Filter className="size-3.5 text-muted-foreground" />
+          {LEVEL_FILTERS.map((l) => (
+            <Chip
+              key={l}
+              active={levelFilter.has(l)}
+              color={riskColorVar(l)}
+              onClick={() => setLevelFilter((s) => toggle(s, l))}
+            >
+              {RISK_LABEL[l]}
+              <span className="num ml-1 opacity-70">{risks.filter((r) => r.level === l).length}</span>
+            </Chip>
+          ))}
+          <span className="mx-1 h-4 w-px bg-border" />
+          {TYPE_FILTERS.map((t) => (
+            <Chip key={t} active={typeFilter.has(t)} onClick={() => setTypeFilter((s) => toggle(s, t))}>
+              {ASSET_TYPE_LABEL[t]}
+            </Chip>
+          ))}
+          <span className="mx-1 h-4 w-px bg-border" />
+          <Chip active={coneOnly} onClick={() => setConeOnly((v) => !v)}>
+            Inside cone only
+          </Chip>
+          {filtersActive && (
+            <button
+              onClick={clearFilters}
+              className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground"
+            >
+              <X className="size-3" /> Clear
+            </button>
+          )}
+          <span className="num ml-auto text-[11px] text-muted-foreground">
+            {filteredAssets.length} of {assets.length} assets in view
+          </span>
+        </div>
+
+        {/* Command-center body — every pane scrolls inside itself */}
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-px bg-border xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="grid min-h-0 grid-rows-[minmax(0,1.35fr)_minmax(0,1fr)] gap-px bg-border">
+            <div className="relative min-h-0 bg-background">
               {event && (
                 <OpsMap
                   className="h-full w-full"
-                  assets={assets}
+                  assets={filteredAssets}
                   risks={riskMap}
                   event={event}
-                  layers={{ assets: true, track: true, wind: true }}
+                  layers={{ assets: true, track: true, wind: true, uncertainty: true }}
                   selectedId={selected}
+                  highlightIds={hovered ? [hovered] : []}
                   onSelect={setSelected}
                 />
               )}
             </div>
-          </div>
 
-          <div className="panel">
-            <div className="border-b px-4 py-2.5 label-xs">Highest exposure — ranked</div>
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="text-left text-[11px] text-muted-foreground">
-                  <th className="px-4 py-2 font-medium">Asset</th>
-                  <th className="px-4 py-2 font-medium">Type</th>
-                  <th className="px-4 py-2 font-medium">Risk</th>
-                  <th className="px-4 py-2 font-medium">Impact ETA</th>
-                  <th className="px-4 py-2 font-medium">Primary threat</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ranked.map((r) => {
-                  const asset = assets.find((a) => a.id === r.assetId)!;
-                  return (
-                    <tr
-                      key={r.assetId}
-                      className="cursor-pointer border-t hover:bg-accent/50"
-                      onClick={() => setSelected(r.assetId)}
-                    >
-                      <td className="px-4 py-2 font-medium">{nameOf(r.assetId)}</td>
-                      <td className="px-4 py-2 text-muted-foreground">{ASSET_TYPE_LABEL[asset.type]}</td>
-                      <td className="px-4 py-2">
-                        <RiskBadge level={r.level} score={r.score} />
-                      </td>
-                      <td className="num px-4 py-2">{r.hoursToImpact ?? "—"} h</td>
-                      <td className="px-4 py-2 text-muted-foreground">
-                        {r.forecastWindMph >= 74 ? `${r.forecastWindMph} mph sustained wind` : `${r.rainfallIn} in rainfall`}
-                      </td>
+            <div className="flex min-h-0 flex-col bg-background">
+              <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
+                <span className="label-xs">Highest exposure — ranked</span>
+                <Link to="/risk" className="text-[11px] text-primary hover:underline">
+                  Full asset risk register
+                </Link>
+              </div>
+              <div className="min-h-0 flex-1 overflow-y-auto">
+                <table className="w-full text-xs">
+                  <thead className="sticky top-0 z-10 bg-surface">
+                    <tr className="text-left text-[11px] text-muted-foreground">
+                      <th className="px-4 py-2 font-medium">Asset</th>
+                      <th className="px-3 py-2 font-medium">Type</th>
+                      <th className="px-3 py-2 font-medium">Risk</th>
+                      <th className="px-3 py-2 font-medium">Posture</th>
+                      <th className="px-3 py-2 font-medium">ETA</th>
+                      <th className="px-4 py-2 font-medium">Primary threat</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="panel p-4">
-            <div className="label-xs mb-2 flex items-center gap-1.5">
-              <Sparkles className="size-3.5 text-primary" /> Operational summary
+                  </thead>
+                  <tbody>
+                    {ranked.slice(0, 80).map((r) => {
+                      const asset = assetById.get(r.assetId);
+                      if (!asset) return null;
+                      const p = postureById.get(r.assetId);
+                      return (
+                        <tr
+                          key={r.assetId}
+                          className={cn(
+                            "cursor-pointer border-t hover:bg-accent/50",
+                            selected === r.assetId && "bg-accent/70",
+                          )}
+                          onClick={() => setSelected(r.assetId)}
+                          onMouseEnter={() => setHovered(r.assetId)}
+                          onMouseLeave={() => setHovered(null)}
+                        >
+                          <td className="px-4 py-1.5 font-medium">{asset.name}</td>
+                          <td className="px-3 py-1.5 text-muted-foreground">{ASSET_TYPE_LABEL[asset.type]}</td>
+                          <td className="px-3 py-1.5">
+                            <RiskBadge level={r.level} score={r.score} />
+                          </td>
+                          <td className="px-3 py-1.5">
+                            {p && p.level > 0 ? (
+                              <span className="text-[11px]" style={{ color: riskColorVar(POSTURE_TONE[p.level]) }}>
+                                {POSTURE_LEVEL_LABEL[p.level]}
+                              </span>
+                            ) : (
+                              <span className="text-[11px] text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="num px-3 py-1.5">{r.hoursToImpact ?? "—"} h</td>
+                          <td className="px-4 py-1.5 text-muted-foreground">
+                            {r.forecastWindMph >= 74
+                              ? `${r.forecastWindMph} mph sustained wind`
+                              : `${r.rainfallIn} in rainfall`}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {ranked.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
+                          No assets match the current filters.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <p className="text-xs leading-relaxed">
-              {event?.name} is forecast to enter the central Gulf within 48 hours as a Category 4 system.{" "}
-              <strong>{metrics.insideCone} facilities</strong> are currently inside the projected impact corridor and{" "}
-              <strong>{metrics.exposed} assets</strong> carry elevated risk or higher. Platform Delta-7 has the highest
-              exposure based on forecast wind intensity and storm proximity, with first onset in{" "}
-              {metrics.firstImpactHours ?? "—"} hours.
-            </p>
-            <div className="mt-3 text-[11px] text-muted-foreground">
-              Generated from the current forecast cycle, asset register and risk model.
-            </div>
           </div>
 
-          <div className="panel">
-            <div className="border-b px-4 py-2.5 label-xs">Upcoming impact timeline</div>
-            <div className="space-y-3 p-4">
-              {timeline.map((t) => (
-                <div key={t.hour}>
-                  <div className="mb-1 flex items-center justify-between text-xs">
-                    <span className="num">+{t.hour} h</span>
-                    <span className="text-muted-foreground">
-                      {t.exposed} exposed · {t.critical} critical
-                    </span>
+          {/* Right rail */}
+          <div className="min-h-0 overflow-y-auto bg-background">
+            {selectedAsset ? (
+              <AssetDetailPanel
+                asset={selectedAsset}
+                risk={riskMap.get(selectedAsset.id)}
+                event={event}
+                allAssets={assets}
+                onClose={() => setSelected(null)}
+                onSelect={setSelected}
+              />
+            ) : (
+              <div className="divide-y">
+                <div className="p-4">
+                  <div className="label-xs mb-2 flex items-center gap-1.5">
+                    <Sparkles className="size-3.5 text-primary" /> Operational summary
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${Math.min(100, (t.exposed / Math.max(1, metrics.exposed)) * 100)}%`,
-                        backgroundColor: riskColorVar(t.critical > 0 ? "critical" : "elevated"),
-                      }}
-                    />
+                  <p className="text-xs leading-relaxed">
+                    {event?.name} is forecast to enter the central Gulf within 48 hours.{" "}
+                    <strong>{metrics.insideCone} facilities</strong> sit inside the projected corridor and{" "}
+                    <strong>{metrics.exposed} assets</strong> carry elevated risk or higher.{" "}
+                    <strong>{breaches.length} configured thresholds</strong> are breached this cycle, with first
+                    onset in {metrics.firstImpactHours ?? "—"} hours.
+                  </p>
+                  {event?.cycleShift && (
+                    <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                      {event.cycleShift.summary}
+                    </p>
+                  )}
+                  <div className="mt-2 text-[10px] text-muted-foreground">
+                    Grounded in the {event?.cycleId ?? "current"} forecast cycle, asset register, threshold rules
+                    and risk model.
                   </div>
                 </div>
-              ))}
-              <Link to="/timeline" className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline">
-                Scrub the forecast timeline <ArrowRight className="size-3" />
-              </Link>
-            </div>
-          </div>
 
-          <div className="panel">
-            <div className="flex items-center justify-between border-b px-4 py-2.5">
-              <span className="label-xs">Active alerts</span>
-              <Link to="/alerts" className="text-[11px] text-primary hover:underline">
-                All alerts
-              </Link>
-            </div>
-            <ul className="divide-y">
-              {(alerts.data ?? []).filter((a) => a.status !== "resolved").slice(0, 5).map((a) => (
-                <li key={a.id} className="px-4 py-2.5">
-                  <div className="flex items-start gap-2">
-                    <span
-                      className="mt-1.5 size-1.5 shrink-0 rounded-full"
-                      style={{
-                        backgroundColor: riskColorVar(
-                          a.severity === "critical" ? "critical" : a.severity === "warning" ? "high" : "monitor",
-                        ),
-                      }}
-                    />
-                    <div>
-                      <div className="text-xs leading-snug font-medium">{a.title}</div>
-                      <div className="mt-0.5 text-[11px] text-muted-foreground">
-                        {a.owner} · {relativeTime(a.createdAtIso)}
-                      </div>
-                    </div>
+                <div className="p-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="label-xs">Response posture</span>
+                    <Link to="/posture" className="text-[11px] text-primary hover:underline">
+                      Open gate board
+                    </Link>
                   </div>
-                </li>
-              ))}
-            </ul>
+                  <div className="grid grid-cols-3 gap-2">
+                    {postureRollup.map((p) => (
+                      <div key={p.lvl} className="rounded-sm border px-2 py-2">
+                        <div className="text-[10px]" style={{ color: riskColorVar(POSTURE_TONE[p.lvl]) }}>
+                          {POSTURE_LEVEL_LABEL[p.lvl]}
+                        </div>
+                        <div className="num mt-0.5 text-lg leading-none font-semibold">{p.n}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="num mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
+                    <span>Personnel on board</span>
+                    <span className="text-foreground">
+                      {pob.current} / {pob.normal}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="label-xs">Threshold breaches</span>
+                    <Link to="/thresholds" className="text-[11px] text-primary hover:underline">
+                      Configure
+                    </Link>
+                  </div>
+                  <ul className="space-y-1.5">
+                    {breaches.slice(0, 5).map((b, i) => (
+                      <li key={`${b.ruleId}-${b.assetId}-${i}`} className="text-[11px] leading-snug">
+                        <button
+                          className="text-left hover:underline"
+                          onClick={() => setSelected(b.assetId)}
+                          onMouseEnter={() => setHovered(b.assetId)}
+                          onMouseLeave={() => setHovered(null)}
+                        >
+                          <span className="font-medium">{assetById.get(b.assetId)?.name ?? b.assetId}</span>
+                          <span className="text-muted-foreground"> — {b.ruleName}</span>
+                        </button>
+                      </li>
+                    ))}
+                    {breaches.length === 0 && (
+                      <li className="text-[11px] text-muted-foreground">No thresholds breached this cycle.</li>
+                    )}
+                  </ul>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between px-4 py-2.5">
+                    <span className="label-xs">Active alerts</span>
+                    <Link to="/alerts" className="text-[11px] text-primary hover:underline">
+                      All alerts
+                    </Link>
+                  </div>
+                  <ul className="divide-y border-t">
+                    {openAlerts.slice(0, 6).map((a) => (
+                      <li key={a.id} className="px-4 py-2.5">
+                        <div className="flex items-start gap-2">
+                          <span
+                            className="mt-1.5 size-1.5 shrink-0 rounded-full"
+                            style={{
+                              backgroundColor: riskColorVar(
+                                a.severity === "critical"
+                                  ? "critical"
+                                  : a.severity === "warning"
+                                    ? "high"
+                                    : "monitor",
+                              ),
+                            }}
+                          />
+                          <div>
+                            <div className="text-xs leading-snug font-medium">{a.title}</div>
+                            <div className="mt-0.5 text-[10px] text-muted-foreground">
+                              {a.owner} · {relativeTime(a.createdAtIso)}
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <Link
+                  to="/timeline"
+                  className="flex items-center gap-1 px-4 py-3 text-[11px] text-primary hover:underline"
+                >
+                  Scrub the forecast timeline <ArrowRight className="size-3" />
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {selectedAsset && (
-        <div className="fixed inset-y-0 right-0 z-30 w-full max-w-sm border-l shadow-2xl">
-          <AssetDetailPanel
-            asset={selectedAsset}
-            risk={riskMap.get(selectedAsset.id)}
-            event={event}
-            allAssets={assets}
-            onClose={() => setSelected(null)}
-            onSelect={setSelected}
-          />
-        </div>
-      )}
     </AppShell>
   );
 }

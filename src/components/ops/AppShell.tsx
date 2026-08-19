@@ -9,6 +9,8 @@ import {
   Map as MapIcon,
   Moon,
   ServerCog,
+  ShieldAlert,
+  SlidersHorizontal,
   Sun,
   Timer,
   Wind,
@@ -22,6 +24,8 @@ const NAV = [
   { to: "/events", label: "Weather Events", icon: Wind },
   { to: "/risk", label: "Asset Risk", icon: Gauge },
   { to: "/timeline", label: "Forecast Timeline", icon: Timer },
+  { to: "/posture", label: "Response Posture", icon: ShieldAlert },
+  { to: "/thresholds", label: "Thresholds", icon: SlidersHorizontal },
   { to: "/alerts", label: "Alerts", icon: AlertTriangle },
   { to: "/copilot", label: "Operations Assistant", icon: Bot },
   { to: "/assets", label: "Asset Management", icon: Database },
@@ -47,12 +51,24 @@ function useTheme() {
   return { dark, toggle };
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({
+  children,
+  fullHeight = false,
+}: {
+  children: ReactNode;
+  /** Command-center pages fill the viewport and scroll inside their own panes. */
+  fullHeight?: boolean;
+}) {
   const { dark, toggle } = useTheme();
   const path = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
+    <div
+      className={cn(
+        "flex bg-background text-foreground",
+        fullHeight ? "h-screen overflow-hidden" : "min-h-screen",
+      )}
+    >
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r bg-sidebar lg:flex">
         <div className="flex h-14 items-center gap-2.5 border-b px-4">
           <div className="grid size-7 place-items-center rounded-sm bg-primary text-primary-foreground">
@@ -134,7 +150,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </div>
         </header>
-        <main className="min-w-0 flex-1">{children}</main>
+        <main className={cn("min-w-0 flex-1", fullHeight && "min-h-0 overflow-hidden")}>{children}</main>
       </div>
     </div>
   );

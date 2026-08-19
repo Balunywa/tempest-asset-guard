@@ -16,7 +16,9 @@ import { Route as CopilotRouteImport } from './routes/copilot'
 import { Route as DeploymentRouteImport } from './routes/deployment'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as PostureRouteImport } from './routes/posture'
 import { Route as RiskRouteImport } from './routes/risk'
+import { Route as ThresholdsRouteImport } from './routes/thresholds'
 import { Route as TimelineRouteImport } from './routes/timeline'
 
 const IndexRoute = IndexRouteImport.update({
@@ -54,9 +56,19 @@ const MapRoute = MapRouteImport.update({
   path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PostureRoute = PostureRouteImport.update({
+  id: '/posture',
+  path: '/posture',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RiskRoute = RiskRouteImport.update({
   id: '/risk',
   path: '/risk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ThresholdsRoute = ThresholdsRouteImport.update({
+  id: '/thresholds',
+  path: '/thresholds',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TimelineRoute = TimelineRouteImport.update({
@@ -73,7 +85,9 @@ export interface FileRoutesByFullPath {
   '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
+  '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
+  '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
 }
 export interface FileRoutesByTo {
@@ -84,7 +98,9 @@ export interface FileRoutesByTo {
   '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
+  '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
+  '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
 }
 export interface FileRoutesById {
@@ -96,7 +112,9 @@ export interface FileRoutesById {
   '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
   '/map': typeof MapRoute
+  '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
+  '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
 }
 export interface FileRouteTypes {
@@ -109,7 +127,9 @@ export interface FileRouteTypes {
     | '/deployment'
     | '/events'
     | '/map'
+    | '/posture'
     | '/risk'
+    | '/thresholds'
     | '/timeline'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -120,7 +140,9 @@ export interface FileRouteTypes {
     | '/deployment'
     | '/events'
     | '/map'
+    | '/posture'
     | '/risk'
+    | '/thresholds'
     | '/timeline'
   id:
     | '__root__'
@@ -131,7 +153,9 @@ export interface FileRouteTypes {
     | '/deployment'
     | '/events'
     | '/map'
+    | '/posture'
     | '/risk'
+    | '/thresholds'
     | '/timeline'
   fileRoutesById: FileRoutesById
 }
@@ -143,7 +167,9 @@ export interface RootRouteChildren {
   DeploymentRoute: typeof DeploymentRoute
   EventsRoute: typeof EventsRoute
   MapRoute: typeof MapRoute
+  PostureRoute: typeof PostureRoute
   RiskRoute: typeof RiskRoute
+  ThresholdsRoute: typeof ThresholdsRoute
   TimelineRoute: typeof TimelineRoute
 }
 
@@ -198,11 +224,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/posture': {
+      id: '/posture'
+      path: '/posture'
+      fullPath: '/posture'
+      preLoaderRoute: typeof PostureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/risk': {
       id: '/risk'
       path: '/risk'
       fullPath: '/risk'
       preLoaderRoute: typeof RiskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/thresholds': {
+      id: '/thresholds'
+      path: '/thresholds'
+      fullPath: '/thresholds'
+      preLoaderRoute: typeof ThresholdsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/timeline': {
@@ -223,7 +263,9 @@ const rootRouteChildren: RootRouteChildren = {
   DeploymentRoute: DeploymentRoute,
   EventsRoute: EventsRoute,
   MapRoute: MapRoute,
+  PostureRoute: PostureRoute,
   RiskRoute: RiskRoute,
+  ThresholdsRoute: ThresholdsRoute,
   TimelineRoute: TimelineRoute,
 }
 export const routeTree = rootRouteImport

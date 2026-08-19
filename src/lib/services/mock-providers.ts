@@ -2,12 +2,19 @@
 // Replace individually with Azure-backed providers via src/lib/services/index.ts.
 
 import { sampleAlerts, sampleAssets, sampleEvent } from "@/lib/data/sample-gom";
+import { derivePosture } from "@/lib/services/posture";
+import { DEFAULT_RULES } from "@/lib/services/thresholds";
 import type {
   Asset,
+  AssetPosture,
   AssetRisk,
   CopilotAnswer,
+  GateId,
+  GateState,
   GeospatialLayer,
+  OperatingStatus,
   OpsAlert,
+  ThresholdRule,
   WeatherEvent,
 } from "@/lib/domain/types";
 import { haversineMi, scoreAsset } from "@/lib/services/risk-engine";
@@ -16,7 +23,9 @@ import type {
   AssetService,
   CopilotService,
   PlanetaryComputerService,
+  PostureService,
   RiskEngineService,
+  ThresholdService,
   WeatherService,
 } from "@/lib/services/interfaces";
 
@@ -66,6 +75,8 @@ export class MockPlanetaryComputerService implements PlanetaryComputerService {
       { id: "assets", name: "Company assets", description: "Platforms, pipelines, wells, terminals and ports", updatedLabel: "Synced 6 minutes ago", defaultOn: true },
       { id: "track", name: "Storm track & forecast cone", description: "Observed track and projected impact corridor", updatedLabel: "Updated 4 minutes ago", defaultOn: true },
       { id: "wind", name: "Severe wind field", description: "Hurricane and tropical-storm force wind extents", updatedLabel: "Updated 4 minutes ago", defaultOn: true },
+      { id: "uncertainty", name: "Forecast spread (ensemble)", description: "Alternative storm paths from the forecast ensemble — how much the track could still change", updatedLabel: "Updated 4 minutes ago", defaultOn: true },
+      { id: "previous", name: "Previous forecast cycle", description: "Where the last cycle put the storm, for cycle-over-cycle comparison", updatedLabel: "Superseded 6 hours ago", defaultOn: false },
       { id: "rain", name: "Rainfall accumulation", description: "72-hour forecast rainfall totals", updatedLabel: "Updated 11 minutes ago", defaultOn: false },
       { id: "flood", name: "Coastal flood exposure", description: "Surge and low-lying terrain exposure along the coast", updatedLabel: "Updated 38 minutes ago", defaultOn: false },
       { id: "satellite", name: "Satellite imagery — Gulf of Mexico", description: "Latest cloud-free composite of the operating region", updatedLabel: "Captured 2 hours ago", defaultOn: false },
@@ -213,4 +224,104 @@ export function nearbyAssets(asset: Asset, all: Asset[], radiusMi = 60): Asset[]
     .sort((x, y) => x.d - y.d)
     .slice(0, 6)
     .map((x) => x.a);
+}
+
+/**
+ * Response-posture provider. Posture is derived from live exposure, with
+ * operator overrides layered on top — the same contract a workflow system
+ * (Fabric / Dataverse) will honour when it replaces this provider.
+ */
+export class MockPostureService implements PostureService {
+  private gateOverrides = new Map<string, Partial<Record<GateId, GateState>>>();
+  private statusOverrides = new Map<string, OperatingStatus>();
+
+  private build(): AssetPosture[] {
+    const risks = new Map(
+      sampleAssets.map((a) => [a.id, scoreAsset(a, sampleEvent, 120)] as const),
+    );
+    return sampleAssets.map((a) => {
+      const base = derivePosture(a, risks.get(a.id));
+      const gates = { ...base.gates, ...(this.gateOverrides.get(a.id) ?? {}) };
+      const status = this.statusOverrides.get(a.id) ?? base.productionStatus;
+      return { ...base, gates, productionStatus: status };
+    });
+  }
+
+  async listPostures(): Promise<AssetPosture[]> {
+    return this.build();
+  }
+
+  async setGate(assetId: string, gate: GateId, state: GateState): Promise<AssetPosture[]> {
+    const current = this.gateOverrides.get(assetId) ?? {};
+    this.gateOverrides.set(assetId, { ...current, [gate]: state });
+    return this.build();
+  }
+
+  async setProductionStatus(assetId: string, status: OperatingStatus): Promise<AssetPosture[]> {
+    this.statusOverrides.set(assetId, status);
+    return this.build();
+  }
+
+  async resetOverrides(): Promise<AssetPosture[]> {
+    this.gateOverrides.clear();
+    this.statusOverrides.clear();
+    return this.build();
+  }
+}
+
+const RULE_STORAGE_KEY = "ops-threshold-rules";
+
+/** Threshold rules persist locally so operator edits survive a reload. */
+export class MockThresholdService implements ThresholdService {
+  private rules: ThresholdRule[] | null = null;
+
+  private load(): ThresholdRule[] {
+    if (this.rules) return this.rules;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = window.localStorage.getItem(RULE_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as ThresholdRule[];
+          if (Array.isArray(parsed) && parsed.length) {
+            this.rules = parsed;
+            return parsed;
+          }
+        }
+      } catch {
+        /* fall through to defaults */
+      }
+    }
+    this.rules = DEFAULT_RULES.map((r) => ({ ...r }));
+    return this.rules;
+  }
+
+  private persist(next: ThresholdRule[]): ThresholdRule[] {
+    this.rules = next;
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem(RULE_STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        /* storage unavailable — in-memory only */
+      }
+    }
+    return next;
+  }
+
+  async listRules(): Promise<ThresholdRule[]> {
+    return this.load();
+  }
+
+  async saveRule(rule: ThresholdRule): Promise<ThresholdRule[]> {
+    const rules = this.load();
+    const exists = rules.some((r) => r.id === rule.id);
+    return this.persist(exists ? rules.map((r) => (r.id === rule.id ? rule : r)) : [...rules, rule]);
+  }
+
+  async deleteRule(id: string): Promise<ThresholdRule[]> {
+    return this.persist(this.load().filter((r) => r.id !== id));
+  }
+
+  async resetRules(): Promise<ThresholdRule[]> {
+    return this.persist(DEFAULT_RULES.map((r) => ({ ...r })));
+  }
 }

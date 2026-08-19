@@ -28,6 +28,18 @@ export const alertsQuery = queryOptions({
   staleTime: 30 * 1000,
 });
 
+export const postureQuery = queryOptions({
+  queryKey: ["posture"],
+  queryFn: () => services.posture.listPostures(),
+  staleTime: 30 * 1000,
+});
+
+export const thresholdRulesQuery = queryOptions({
+  queryKey: ["threshold-rules"],
+  queryFn: () => services.thresholds.listRules(),
+  staleTime: 5 * 60 * 1000,
+});
+
 export function risksQuery(horizonHours: number) {
   return queryOptions({
     queryKey: ["risks", horizonHours],

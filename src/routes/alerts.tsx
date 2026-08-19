@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 import { AppShell, PageHeader } from "@/components/ops/AppShell";
-import { alertsQuery, assetsQuery } from "@/lib/hooks/use-ops-data";
+import { alertsQuery, assetsQuery, thresholdRulesQuery, useOpsSnapshot } from "@/lib/hooks/use-ops-data";
+import { METRIC_LABEL, METRIC_UNIT, evaluateRules } from "@/lib/services/thresholds";
 import { services } from "@/lib/services";
 import { relativeTime, riskColorVar, utcStamp } from "@/lib/format";
 import type { AlertSeverity, OpsAlert } from "@/lib/domain/types";
@@ -32,8 +34,44 @@ const SEVERITY_TONE: Record<AlertSeverity, "critical" | "high" | "monitor" | "no
 
 function AlertsPage() {
   const qc = useQueryClient();
-  const alerts = useQuery(alertsQuery).data ?? [];
+  const baseAlerts = useQuery(alertsQuery).data ?? [];
   const assets = useQuery(assetsQuery).data ?? [];
+  const rules = useQuery(thresholdRulesQuery).data ?? [];
+  const { risks } = useOpsSnapshot(120);
+  const [localStatus, setLocalStatus] = useState<Record<string, OpsAlert["status"]>>({});
+
+  // Threshold breaches become first-class alerts, so the feed reflects the
+  // limits operators configured rather than a fixed list.
+  const derived: OpsAlert[] = useMemo(() => {
+    const nameOf = (id: string) => assets.find((a) => a.id === id)?.name ?? id;
+    // Cap each rule to its most urgent facilities so one breached limit across
+    // 40 wells doesn't bury every other alert in the feed.
+    const perRule = new Map<string, number>();
+    return evaluateRules(rules, assets, risks)
+      .sort((a, b) => (a.hoursToImpact ?? 999) - (b.hoursToImpact ?? 999))
+      .filter((b) => {
+        const n = perRule.get(b.ruleId) ?? 0;
+        if (n >= 4) return false;
+        perRule.set(b.ruleId, n + 1);
+        return true;
+      })
+      .map((b) => {
+        const id = `${b.ruleId}-${b.assetId}`;
+        return {
+          id,
+          title: `${nameOf(b.assetId)} — ${b.ruleName}`,
+          detail: `${METRIC_LABEL[b.metric]} ${b.observed}${METRIC_UNIT[b.metric]} against a configured limit of ${b.comparator === "gte" ? "≥" : "≤"} ${b.threshold}${METRIC_UNIT[b.metric]}${b.hoursToImpact !== null ? `, onset in ${b.hoursToImpact} h` : ""}. ${b.action}`,
+          severity: b.severity,
+          assetId: b.assetId,
+          eventId: "AL072026",
+          status: localStatus[id] ?? "open",
+          owner: b.owner,
+          createdAtIso: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
+        } satisfies OpsAlert;
+      });
+  }, [rules, assets, risks, localStatus]);
+
+  const alerts = useMemo(() => [...derived, ...baseAlerts], [derived, baseAlerts]);
   const [severity, setSeverity] = useState<AlertSeverity | "all">("all");
   const [status, setStatus] = useState<OpsAlert["status"] | "all">("all");
 
@@ -42,6 +80,10 @@ function AlertsPage() {
     .filter((a) => (status === "all" ? true : a.status === status));
 
   async function setAlertStatus(id: string, next: OpsAlert["status"]) {
+    if (id.startsWith("THR-")) {
+      setLocalStatus((s) => ({ ...s, [id]: next }));
+      return;
+    }
     await services.alerts.setStatus(id, next);
     await qc.invalidateQueries({ queryKey: ["alerts"] });
   }
@@ -56,6 +98,14 @@ function AlertsPage() {
       <PageHeader
         title="Alerts"
         description="Threshold breaches, corridor entries and forecast updates routed to the accountable operations owner."
+        actions={
+          <Link
+            to="/thresholds"
+            className="rounded-sm border px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
+          >
+            Configure thresholds
+          </Link>
+        }
       />
       <div className="space-y-4 p-4">
         <div className="panel grid grid-cols-2 divide-x sm:grid-cols-4">
