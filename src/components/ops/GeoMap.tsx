@@ -799,6 +799,7 @@ export default function GeoMap({
         <button className="rounded-sm p-1.5 hover:bg-accent" onClick={resetView} aria-label="Reset view">
           <Crosshair className="size-4" />
         </button>
+        </div>
       </div>
 
       <div className="num pointer-events-none absolute bottom-3 left-3 rounded-md border bg-popover/85 px-2.5 py-1.5 text-[10px] text-muted-foreground backdrop-blur">
