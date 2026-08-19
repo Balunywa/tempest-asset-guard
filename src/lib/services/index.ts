@@ -7,7 +7,9 @@ import {
   MockAssetService,
   MockCopilotService,
   MockPlanetaryComputerService,
+  MockPostureService,
   MockRiskEngineService,
+  MockThresholdService,
   MockWeatherService,
 } from "@/lib/services/mock-providers";
 
@@ -16,6 +18,8 @@ export const services: PlatformServices = {
   weather: new MockWeatherService(),
   risk: new MockRiskEngineService(),
   alerts: new MockAlertService(),
+  posture: new MockPostureService(),
+  thresholds: new MockThresholdService(),
   geospatial: new MockPlanetaryComputerService(),
   copilot: new MockCopilotService(),
 };
