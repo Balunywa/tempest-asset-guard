@@ -44,10 +44,19 @@ function AlertsPage() {
   // limits operators configured rather than a fixed list.
   const derived: OpsAlert[] = useMemo(() => {
     const nameOf = (id: string) => assets.find((a) => a.id === id)?.name ?? id;
+    // Cap each rule to its most urgent facilities so one breached limit across
+    // 40 wells doesn't bury every other alert in the feed.
+    const perRule = new Map<string, number>();
     return evaluateRules(rules, assets, risks)
-      .slice(0, 40)
+      .sort((a, b) => (a.hoursToImpact ?? 999) - (b.hoursToImpact ?? 999))
+      .filter((b) => {
+        const n = perRule.get(b.ruleId) ?? 0;
+        if (n >= 4) return false;
+        perRule.set(b.ruleId, n + 1);
+        return true;
+      })
       .map((b) => {
-        const id = `THR-${b.ruleId}-${b.assetId}`;
+        const id = `${b.ruleId}-${b.assetId}`;
         return {
           id,
           title: `${nameOf(b.assetId)} — ${b.ruleName}`,
