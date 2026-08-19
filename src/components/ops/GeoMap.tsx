@@ -6,7 +6,7 @@ import type { Feature, FeatureCollection } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import type { Asset, AssetRisk, RiskLevel, WeatherEvent } from "@/lib/domain/types";
-import { basemapProviderLabel, basemapStyle } from "@/lib/map/basemap";
+import { basemapProviderLabel, basemapStyle, type BasemapId } from "@/lib/map/basemap";
 import { circlePolygon, conePolygon, empty, feature, quadrantPolygon } from "@/lib/map/geojson";
 import { riskColorVar } from "@/lib/format";
 import { cn } from "@/lib/utils";
