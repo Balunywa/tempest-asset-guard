@@ -26,12 +26,25 @@ export function circlePolygon(lon: number, lat: number, miles: number, steps = 6
  * NHC-style asymmetric wind-radii polygon: NE, SE, SW, NW radii in miles.
  */
 export function quadrantPolygon(lon: number, lat: number, quad: number[], steps = 16): Polygon {
+  const [ne = 0, se = 0, sw = 0, nw = 0] = quad;
+  // radii are defined per NHC quadrant (NE/SE/SW/NW); blend between them so the
+  // envelope reads as a smooth asymmetric field rather than four hard blocks.
+  const at = (bearing: number) => {
+    const b = ((bearing % 360) + 360) % 360;
+    const q = Math.floor(b / 90);
+    const t = (b % 90) / 90;
+    const order = [ne, se, sw, nw];
+    const a = order[q] ?? 0;
+    const c = order[(q + 1) % 4] ?? 0;
+    const w = (1 - Math.cos(t * Math.PI)) / 2;
+    return a + (c - a) * w;
+  };
+  const total = steps * 4;
   const ring: Position[] = [];
-  quad.forEach((mi, q) => {
-    const start = q * 90;
-    for (let i = 0; i <= steps; i++) ring.push(destination(lon, lat, start + (i * 90) / steps, mi));
-  });
-  ring.push(ring[0] as Position);
+  for (let i = 0; i <= total; i++) {
+    const bearing = (i * 360) / total;
+    ring.push(destination(lon, lat, bearing, at(bearing)));
+  }
   return { type: "Polygon", coordinates: [ring] };
 }
 
