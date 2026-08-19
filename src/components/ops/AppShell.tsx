@@ -116,20 +116,34 @@ export function AppShell({
               >
                 <item.icon className="size-4 shrink-0" />
                 {item.label}
-              </Link>
+              </OpsLink>
             );
           })}
         </nav>
         <div className="border-t p-3 text-[11px] text-muted-foreground">
           <div className="flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-risk-monitor" />
-            Sample Gulf dataset active
+            <span className={cn("size-1.5 rounded-full", isDemo ? "bg-risk-elevated" : "bg-risk-monitor")} />
+            {isDemo ? "Synthetic Gulf dataset" : "Tenant dataset"}
           </div>
           <div className="mt-1">Forecast refreshed 4 min ago</div>
+          <Link to="/" className="mt-2 inline-block text-[11px] text-primary hover:underline">
+            ← Back to site
+          </Link>
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
+        {isDemo ? (
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-risk-elevated/40 bg-risk-elevated/10 px-4 py-1.5 text-[11px] text-risk-elevated">
+            <span className="font-semibold tracking-wide uppercase">Demo data</span>
+            <span className="text-muted-foreground">
+              Synthetic Gulf estate and a fictional storm. Not an operational forecast — do not use for decisions.
+            </span>
+            <Link to="/auth" className="ml-auto font-medium text-primary hover:underline">
+              Sign in with Microsoft to use tenant data →
+            </Link>
+          </div>
+        ) : null}
         <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-surface/95 px-4 backdrop-blur">
           <div className="lg:hidden">
             <select
@@ -138,7 +152,7 @@ export function AppShell({
               onChange={(e) => (window.location.href = e.target.value)}
             >
               {NAV.map((n) => (
-                <option key={n.to} value={n.to}>
+                <option key={n.to} value={href(n.to)}>
                   {n.label}
                 </option>
               ))}
