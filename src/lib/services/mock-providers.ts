@@ -75,6 +75,8 @@ export class MockPlanetaryComputerService implements PlanetaryComputerService {
       { id: "assets", name: "Company assets", description: "Platforms, pipelines, wells, terminals and ports", updatedLabel: "Synced 6 minutes ago", defaultOn: true },
       { id: "track", name: "Storm track & forecast cone", description: "Observed track and projected impact corridor", updatedLabel: "Updated 4 minutes ago", defaultOn: true },
       { id: "wind", name: "Severe wind field", description: "Hurricane and tropical-storm force wind extents", updatedLabel: "Updated 4 minutes ago", defaultOn: true },
+      { id: "uncertainty", name: "Forecast spread (ensemble)", description: "Alternative storm paths from the forecast ensemble — how much the track could still change", updatedLabel: "Updated 4 minutes ago", defaultOn: true },
+      { id: "previous", name: "Previous forecast cycle", description: "Where the last cycle put the storm, for cycle-over-cycle comparison", updatedLabel: "Superseded 6 hours ago", defaultOn: false },
       { id: "rain", name: "Rainfall accumulation", description: "72-hour forecast rainfall totals", updatedLabel: "Updated 11 minutes ago", defaultOn: false },
       { id: "flood", name: "Coastal flood exposure", description: "Surge and low-lying terrain exposure along the coast", updatedLabel: "Updated 38 minutes ago", defaultOn: false },
       { id: "satellite", name: "Satellite imagery — Gulf of Mexico", description: "Latest cloud-free composite of the operating region", updatedLabel: "Captured 2 hours ago", defaultOn: false },

@@ -34,6 +34,8 @@ function MapPage() {
     assets: true,
     track: true,
     wind: true,
+    uncertainty: true,
+    previous: false,
     rain: false,
     flood: false,
     satellite: false,
@@ -70,6 +72,27 @@ function MapPage() {
     <AppShell>
       <div className="flex h-[calc(100vh-3.5rem)] min-h-0">
         <div className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r bg-panel md:flex">
+          {event?.cycleShift && (
+            <div className="border-b p-3">
+              <div className="label-xs mb-1.5">Change since last cycle</div>
+              <div className="num text-xs">
+                <span className="text-foreground">{event.cycleShift.shiftMi} mi</span>{" "}
+                <span className="text-muted-foreground">{event.cycleShift.shiftDirection}</span>
+              </div>
+              <div className="num mt-1 text-[11px] text-muted-foreground">
+                Intensity {event.cycleShift.intensityDeltaMph >= 0 ? "+" : ""}
+                {event.cycleShift.intensityDeltaMph} mph · cone{" "}
+                {event.cycleShift.coneDeltaMi >= 0 ? "+" : ""}
+                {event.cycleShift.coneDeltaMi} mi
+              </div>
+              <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+                {event.cycleShift.summary}
+              </p>
+              <div className="num mt-1.5 text-[10px] text-muted-foreground/80">
+                {event.cycleShift.previousCycle} → {event.cycleShift.currentCycle}
+              </div>
+            </div>
+          )}
           <div className="border-b p-3">
             <div className="label-xs mb-2">Map layers</div>
             <ul className="space-y-2">
