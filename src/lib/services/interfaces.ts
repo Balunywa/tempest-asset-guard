@@ -4,10 +4,15 @@
 
 import type {
   Asset,
+  AssetPosture,
   AssetRisk,
   CopilotAnswer,
+  GateId,
+  GateState,
   GeospatialLayer,
+  OperatingStatus,
   OpsAlert,
+  ThresholdRule,
   WeatherEvent,
 } from "@/lib/domain/types";
 
@@ -33,6 +38,22 @@ export interface AlertService {
   setStatus(id: string, status: OpsAlert["status"]): Promise<OpsAlert[]>;
 }
 
+/** Decision state of the estate: lead-time gates, shut-in and personnel status. */
+export interface PostureService {
+  listPostures(): Promise<AssetPosture[]>;
+  setGate(assetId: string, gate: GateId, state: GateState): Promise<AssetPosture[]>;
+  setProductionStatus(assetId: string, status: OperatingStatus): Promise<AssetPosture[]>;
+  resetOverrides(): Promise<AssetPosture[]>;
+}
+
+/** Operator-configurable thresholds that drive the alert feed. */
+export interface ThresholdService {
+  listRules(): Promise<ThresholdRule[]>;
+  saveRule(rule: ThresholdRule): Promise<ThresholdRule[]>;
+  deleteRule(id: string): Promise<ThresholdRule[]>;
+  resetRules(): Promise<ThresholdRule[]>;
+}
+
 export interface PlanetaryComputerService {
   /** Operator-facing geospatial layers; catalog mechanics stay hidden. */
   listLayers(): Promise<GeospatialLayer[]>;
@@ -48,6 +69,8 @@ export interface PlatformServices {
   weather: WeatherService;
   risk: RiskEngineService;
   alerts: AlertService;
+  posture: PostureService;
+  thresholds: ThresholdService;
   geospatial: PlanetaryComputerService;
   copilot: CopilotService;
 }
