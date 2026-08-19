@@ -425,3 +425,49 @@ export const sampleAlerts: OpsAlert[] = [
     createdAtIso: new Date(now - 26 * 60 * 60 * 1000).toISOString(),
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Forecast uncertainty: ensemble spread and the previous cycle's centerline.
+// Deterministic perturbations of the operational track — no randomness, so the
+// picture is stable across renders and reproducible in demos.
+// ---------------------------------------------------------------------------
+
+sampleEvent.cycleId = "18Z cycle";
+
+sampleEvent.ensemble = Array.from({ length: 14 }, (_, m) => {
+  // Members fan out around the centerline, spread growing with lead time.
+  const bias = (m - 6.5) / 6.5; // -1 … +1
+  const speedBias = 1 + ((m % 5) - 2) * 0.055;
+  return {
+    id: `ENS-${String(m + 1).padStart(2, "0")}`,
+    label: `Member ${m + 1}`,
+    track: sampleEvent.forecast.map((p) => {
+      const spread = Math.pow(p.hour / 120, 1.35);
+      const lat = p.lat + bias * spread * 2.4 * 0.62 + Math.sin(bias * 3.1) * spread * 0.5;
+      const lon = p.lon - bias * spread * 3.6 + Math.cos(bias * 2.2) * spread * 0.45;
+      const drift = (speedBias - 1) * spread * 2.1;
+      return [Number((lon + drift).toFixed(3)), Number((lat + drift * 0.4).toFixed(3))] as [number, number];
+    }),
+  };
+});
+
+// Previous cycle ran ~21 miles east and 6 mph weaker at peak.
+sampleEvent.previousForecast = sampleEvent.forecast.map((p) => ({
+  ...p,
+  lat: Number((p.lat - (p.hour / 120) * 0.22).toFixed(3)),
+  lon: Number((p.lon + (p.hour / 120) * 0.62).toFixed(3)),
+  windMph: Math.max(35, Math.round(p.windMph - (p.hour >= 24 && p.hour <= 72 ? 7 : 2))),
+  coneRadiusMi: Math.round(p.coneRadiusMi * 1.07),
+}));
+
+sampleEvent.cycleShift = {
+  currentCycle: "18Z cycle",
+  previousCycle: "12Z cycle",
+  shiftMi: 24,
+  shiftBearingDeg: 288,
+  shiftDirection: "west-northwest",
+  intensityDeltaMph: 7,
+  coneDeltaMi: -13,
+  summary:
+    "The 48-hour position moved 24 miles west-northwest of the 12Z cycle, peak intensity increased 7 mph and the 72-hour cone tightened by 13 miles. Central Gulf exposure increased; eastern Gulf exposure eased.",
+};
