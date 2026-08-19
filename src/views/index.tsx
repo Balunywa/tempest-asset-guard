@@ -143,7 +143,7 @@ export function OverviewPage() {
                   {event.cycleShift.previousCycle}
                 </span>
               )}
-              <Link
+              <OpsLink
                 to="/copilot"
                 className="inline-flex items-center gap-2 rounded-sm border border-primary/40 bg-primary/10 px-2.5 py-1.5 text-[11px] font-medium text-primary hover:bg-primary/15"
               >
@@ -419,7 +419,7 @@ export function OverviewPage() {
                   </ul>
                 </div>
 
-                <Link
+                <OpsLink
                   to="/timeline"
                   className="flex items-center gap-1 px-4 py-3 text-[11px] text-primary hover:underline"
                 >

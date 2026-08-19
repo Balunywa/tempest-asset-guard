@@ -84,7 +84,7 @@ export function AlertsPage() {
         title="Alerts"
         description="Threshold breaches, corridor entries and forecast updates routed to the accountable operations owner."
         actions={
-          <Link
+          <OpsLink
             to="/thresholds"
             className="rounded-sm border px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
           >
