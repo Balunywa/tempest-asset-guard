@@ -37,7 +37,7 @@ function LandingPage() {
             Oil &amp; gas industry accelerator on Microsoft Azure
           </p>
           <h1 className="mt-4 max-w-4xl text-4xl leading-[1.1] font-semibold tracking-tight sm:text-5xl">
-            Know which platforms you shut in — and when — before the cone reaches them.
+            Hurricane decisions for your offshore estate, ranked by asset and ready before the next cycle.
           </h1>
           <p className="mt-5 max-w-2xl text-base text-muted-foreground">
             Gulf of Mexico hurricane and asset impact intelligence. The accelerator joins tropical forecasts
