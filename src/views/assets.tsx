@@ -45,7 +45,7 @@ export function AssetsPage() {
     <AppShell>
       <PageHeader
         title="Asset Management"
-        description="Connect your infrastructure estate. The sample Gulf dataset is isolated and can be disabled once your own sources are connected."
+        description="Connect your infrastructure estate. The sample dataset is isolated and can be disabled once your own sources are connected."
       />
       <div className="space-y-4 p-4">
         <div className="panel">
@@ -100,7 +100,7 @@ export function AssetsPage() {
               </table>
             </div>
             <div className="border-t px-4 py-2 text-[11px] text-muted-foreground">
-              Showing {rows.length} of {assets.length} assets from the sample Gulf dataset.
+              Showing {rows.length} of {assets.length} assets from the sample dataset.
             </div>
           </div>
 

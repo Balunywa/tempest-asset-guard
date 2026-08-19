@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Card, Section, SiteChrome, SiteHero } from "@/components/site/SiteChrome";
 
-const TITLE = "Solution | Gulf Hurricane & Asset Impact Intelligence";
+const TITLE = "Solution | Weather & Asset Risk Intelligence";
 const DESC =
   "How the accelerator joins tropical hazard forecasts to your offshore estate: explainable risk scoring, T-gate response posture, configurable thresholds and forecast uncertainty.";
 
@@ -56,7 +56,7 @@ function SolutionPage() {
         </div>
       </Section>
 
-      <Section title="Operating model" description="Nine console surfaces that map to how a Gulf storm is actually run.">
+      <Section title="Operating model" description="Nine console surfaces that map to how a severe weather event is actually run.">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Card title="Operations overview">Fixed-viewport command centre with cross-filtering between map, ranked exposure table and alert rail.</Card>
           <Card title="Live map">Real vector basemap with track history, NHC-style forecast cone, asymmetric wind radii and asset layers.</Card>
@@ -70,7 +70,7 @@ function SolutionPage() {
         </div>
       </Section>
 
-      <Section title="See it running" description="The demo is open — no sign-in, no form. It runs on a synthetic Gulf estate and a fictional hurricane.">
+      <Section title="See it running" description="The demo is open — no sign-in, no form. It runs on a synthetic sample estate and a fictional hurricane.">
         <Link to="/demo" className="inline-flex rounded-sm bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
           Launch demo
         </Link>

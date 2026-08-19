@@ -8,7 +8,7 @@ export const Route = createFileRoute("/auth_/callback")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Signing in | Gulf Asset Weather Risk" },
+      { title: "Signing in | Weather & Asset Risk" },
       { name: "description", content: "Completing sign-in." },
       { name: "robots", content: "noindex" },
     ],

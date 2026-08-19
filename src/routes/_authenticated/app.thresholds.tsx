@@ -5,9 +5,9 @@ import { ThresholdsPage } from "@/views/thresholds";
 export const Route = createFileRoute("/_authenticated/app/thresholds")({
   head: () => ({
     meta: [
-      { title: "Thresholds | Gulf Asset Weather Risk" },
+      { title: "Thresholds | Weather & Asset Risk" },
       { name: "description", content: "Configurable operational limits per asset class that drive automated alerting." },
-      { property: "og:title", content: "Thresholds | Gulf Asset Weather Risk" },
+      { property: "og:title", content: "Thresholds | Weather & Asset Risk" },
       { property: "og:description", content: "Configurable operational limits per asset class that drive automated alerting." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

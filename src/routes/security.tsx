@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Card, Section, SiteChrome, SiteHero } from "@/components/site/SiteChrome";
 
-const TITLE = "Security & Tenancy | Gulf Asset Weather Risk";
+const TITLE = "Security & Tenancy | Weather & Asset Risk";
 const DESC =
   "Identity, tenancy and data-handling model: Microsoft Entra ID single sign-on, per-tenant isolation, row-level security and auditable risk scoring.";
 

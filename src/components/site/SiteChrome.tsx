@@ -20,7 +20,7 @@ export function SiteChrome({ children }: { children: ReactNode }) {
             <span className="text-sm leading-tight font-semibold tracking-tight">
               Asset Weather Ops
               <span className="block text-[10px] font-normal text-muted-foreground">
-                Gulf hurricane &amp; asset impact intelligence
+                Weather &amp; asset risk intelligence
               </span>
             </span>
           </Link>
@@ -52,7 +52,7 @@ export function SiteChrome({ children }: { children: ReactNode }) {
 
       <footer className="border-t bg-surface">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-5 py-8 text-[11px] text-muted-foreground">
-          <span>Gulf of Mexico Hurricane &amp; Asset Impact Intelligence — an Azure industry accelerator.</span>
+          <span>Weather & Asset Risk Intelligence, an Azure industry accelerator.</span>
           <div className="ml-auto flex flex-wrap gap-x-5 gap-y-2">
             <Link to="/solution" className="hover:text-foreground">Solution</Link>
             <Link to="/architecture" className="hover:text-foreground">Architecture</Link>

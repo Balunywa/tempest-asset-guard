@@ -77,13 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Gulf Asset Weather Risk Operations" },
+      { title: "Weather & Asset Risk Operations" },
       {
         name: "description",
         content:
           "Enterprise weather and asset risk operations for oil & gas: hurricane exposure, asset risk scoring, alerts and an AI operations assistant.",
       },
-      { property: "og:title", content: "Gulf Asset Weather Risk Operations" },
+      { property: "og:title", content: "Weather & Asset Risk Operations" },
       {
         property: "og:description",
         content: "Hurricane and asset exposure intelligence for offshore and downstream energy operations.",

@@ -3,7 +3,7 @@ import { Activity, Gauge, Layers, ShieldCheck } from "lucide-react";
 
 import { Card, Section, SiteChrome } from "@/components/site/SiteChrome";
 
-const TITLE = "Gulf Hurricane & Asset Impact Intelligence | Azure Accelerator";
+const TITLE = "Weather & Asset Risk Intelligence | Azure Accelerator";
 const DESC =
   "Join tropical forecasts to your offshore estate with explainable asset risk scoring, T-gate response posture and forecast uncertainty, deployable into your own Azure tenant.";
 
@@ -40,7 +40,7 @@ function LandingPage() {
             Hurricane decisions for your offshore estate, ranked by asset and ready before the next cycle.
           </h1>
           <p className="mt-5 max-w-2xl text-base text-muted-foreground">
-            Gulf of Mexico hurricane and asset impact intelligence. The accelerator joins tropical forecasts
+            Weather and asset impact intelligence for critical infrastructure. The accelerator joins severe weather forecasts
             to your platforms, wells, pipelines and terminals, and turns them into an explainable exposure
             score, a response posture board and an alert queue your storm calls can actually run on.
           </p>
@@ -123,7 +123,7 @@ function LandingPage() {
         <div className="mx-auto max-w-6xl px-5 py-16">
           <h2 className="text-xl font-semibold tracking-tight">Open the console</h2>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            The demo is unrestricted. No form, no email gate. It runs on a synthetic Gulf estate and a
+            The demo is unrestricted. No form, no email gate. It runs on a synthetic sample estate and a
             fictional hurricane so you can drive every surface immediately.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
