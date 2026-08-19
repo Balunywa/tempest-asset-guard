@@ -300,10 +300,13 @@ export default function GeoMap({
   }, [assets]);
 
   // ------------------------------------------------------------- map set-up
+  const userMovedRef = useRef(false);
+
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
+    const container = containerRef.current;
     const map = new maplibregl.Map({
-      container: containerRef.current,
+      container,
       style: basemapStyle(satellite ? "satellite" : "dark"),
       bounds: GULF_BOUNDS,
       fitBoundsOptions: { padding: 24 },
@@ -319,9 +322,31 @@ export default function GeoMap({
     map.on("move", () => setZoomLevel(map.getZoom()));
     map.on("mousemove", (e: maplibregl.MapMouseEvent) => setCursor({ lon: e.lngLat.lng, lat: e.lngLat.lat }));
     map.on("mouseout", () => setCursor(null));
-    map.on("load", () => setReady(true));
+    map.on("load", () => {
+      setReady(true);
+      // the container may have been zero-sized or mid-layout at construction,
+      // which leaves the initial fit pointing somewhere other than the Gulf.
+      map.resize();
+      if (!userMovedRef.current) map.fitBounds(GULF_BOUNDS, { padding: 24, animate: false });
+    });
+
+    // any user-initiated pan/zoom stops the automatic refit
+    const markMoved = () => (userMovedRef.current = true);
+    map.on("dragstart", markMoved);
+    map.on("wheel", markMoved);
+    map.on("boxzoomstart", markMoved);
+
+    // keep the Gulf framed when the panel resizes (breakpoint change, sidebar
+    // open/close, window resize) until the operator takes control of the view.
+    const ro = new ResizeObserver(() => {
+      if (!mapRef.current) return;
+      map.resize();
+      if (!userMovedRef.current) map.fitBounds(GULF_BOUNDS, { padding: 24, animate: false });
+    });
+    ro.observe(container);
 
     return () => {
+      ro.disconnect();
       map.remove();
       mapRef.current = null;
       setReady(false);
@@ -329,10 +354,19 @@ export default function GeoMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+
   /** (Re)build every operational layer — also runs after a basemap style swap. */
+  const buildRetryRef = useRef<(() => void) | null>(null);
   const buildLayers = useCallback(() => {
     const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map) return;
+    if (!map.isStyleLoaded()) {
+      // style still parsing (slow tiles/glyphs): rebuild as soon as it settles,
+      // otherwise the operational layers are silently dropped.
+      map.once("idle", () => buildRetryRef.current?.());
+      return;
+    }
+
 
     const src = (id: string, data: FeatureCollection) => {
       const existing = map.getSource(id) as maplibregl.GeoJSONSource | undefined;
@@ -610,9 +644,15 @@ export default function GeoMap({
 
   const [styleVersion, setStyleVersion] = useState(0);
 
+  buildRetryRef.current = () => {
+    buildLayers();
+    setStyleVersion((v) => v + 1);
+  };
+
   useEffect(() => {
     if (ready) buildLayers();
   }, [ready, buildLayers]);
+
 
   // basemap swap re-adds the operational layers on top of the new style
   const lastBasemap = useRef<string | null>(null);
@@ -677,8 +717,11 @@ export default function GeoMap({
     if (a) map.easeTo({ center: [a.lon, a.lat], zoom: Math.max(map.getZoom(), 6.5), duration: 700 });
   }, [selectedId, ready, assets]);
 
-  const resetView = () =>
+  const resetView = () => {
+    userMovedRef.current = false;
     mapRef.current?.fitBounds(GULF_BOUNDS, { padding: 24, duration: 600 });
+  };
+
 
   return (
     <div className={cn("relative overflow-hidden bg-ocean-deep", className)}>
