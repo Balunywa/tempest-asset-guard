@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AlertsRouteImport } from './routes/alerts'
+import { Route as ArchitectureRouteImport } from './routes/architecture'
 import { Route as AssetsRouteImport } from './routes/assets'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CopilotRouteImport } from './routes/copilot'
@@ -59,6 +60,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AlertsRoute = AlertsRouteImport.update({
   id: '/alerts',
   path: '/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArchitectureRoute = ArchitectureRouteImport.update({
+  id: '/architecture',
+  path: '/architecture',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AssetsRoute = AssetsRouteImport.update({
@@ -238,6 +244,7 @@ const AuthenticatedAppTimelineRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
+  '/architecture': typeof ArchitectureRoute
   '/assets': typeof AssetsRoute
   '/auth': typeof AuthRoute
   '/copilot': typeof CopilotRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
+  '/architecture': typeof ArchitectureRoute
   '/assets': typeof AssetsRoute
   '/auth': typeof AuthRoute
   '/copilot': typeof CopilotRoute
@@ -316,6 +324,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/alerts': typeof AlertsRoute
+  '/architecture': typeof ArchitectureRoute
   '/assets': typeof AssetsRoute
   '/auth': typeof AuthRoute
   '/copilot': typeof CopilotRoute
@@ -356,6 +365,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/alerts'
+    | '/architecture'
     | '/assets'
     | '/auth'
     | '/copilot'
@@ -394,6 +404,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/alerts'
+    | '/architecture'
     | '/assets'
     | '/auth'
     | '/copilot'
@@ -433,6 +444,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/alerts'
+    | '/architecture'
     | '/assets'
     | '/auth'
     | '/copilot'
@@ -473,6 +485,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AlertsRoute: typeof AlertsRoute
+  ArchitectureRoute: typeof ArchitectureRoute
   AssetsRoute: typeof AssetsRoute
   AuthRoute: typeof AuthRoute
   CopilotRoute: typeof CopilotRoute
@@ -519,6 +532,13 @@ declare module '@tanstack/react-router' {
       path: '/alerts'
       fullPath: '/alerts'
       preLoaderRoute: typeof AlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/architecture': {
+      id: '/architecture'
+      path: '/architecture'
+      fullPath: '/architecture'
+      preLoaderRoute: typeof ArchitectureRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/assets': {
@@ -797,6 +817,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AlertsRoute: AlertsRoute,
+  ArchitectureRoute: ArchitectureRoute,
   AssetsRoute: AssetsRoute,
   AuthRoute: AuthRoute,
   CopilotRoute: CopilotRoute,
