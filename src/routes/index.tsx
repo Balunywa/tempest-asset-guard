@@ -142,7 +142,7 @@ function OverviewPage() {
 
   return (
     <AppShell fullHeight>
-      <div className="flex h-full min-h-0 flex-col">
+      <div className="flex min-h-0 flex-col xl:h-full">
         {/* Metric strip */}
         <div className="shrink-0 border-b bg-surface">
           <div className="flex flex-wrap items-center justify-between gap-3 px-5 pt-3">
@@ -171,7 +171,7 @@ function OverviewPage() {
               </Link>
             </div>
           </div>
-          <div className="mt-2.5 grid grid-cols-3 border-t xl:grid-cols-7">
+          <div className="mt-2.5 grid grid-cols-2 border-t sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
             <StatCell label="Assets monitored" value={metrics.monitored} sub="Across 4 business units" />
             <StatCell label="Assets exposed" value={metrics.exposed} sub="Elevated risk or higher" />
             <StatCell label="Inside forecast cone" value={metrics.insideCone} sub="Projected impact corridor" />
@@ -230,8 +230,8 @@ function OverviewPage() {
 
         {/* Command-center body — every pane scrolls inside itself */}
         <div className="grid min-h-0 flex-1 grid-cols-1 gap-px bg-border xl:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="grid min-h-0 grid-rows-[minmax(0,1.35fr)_minmax(0,1fr)] gap-px bg-border">
-            <div className="relative min-h-0 bg-background">
+          <div className="grid min-h-0 grid-rows-[auto_auto] gap-px bg-border xl:grid-rows-[minmax(0,1.35fr)_minmax(0,1fr)]">
+            <div className="relative h-[440px] min-h-0 bg-background lg:h-[520px] xl:h-auto">
               {event && (
                 <OpsMap
                   className="h-full w-full"
@@ -246,7 +246,7 @@ function OverviewPage() {
               )}
             </div>
 
-            <div className="flex min-h-0 flex-col bg-background">
+            <div className="flex h-[420px] min-h-0 flex-col bg-background xl:h-auto">
               <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
                 <span className="label-xs">Highest exposure — ranked</span>
                 <Link to="/risk" className="text-[11px] text-primary hover:underline">
@@ -318,7 +318,7 @@ function OverviewPage() {
           </div>
 
           {/* Right rail */}
-          <div className="min-h-0 overflow-y-auto bg-background">
+          <div className="min-h-0 bg-background xl:overflow-y-auto">
             {selectedAsset ? (
               <AssetDetailPanel
                 asset={selectedAsset}
