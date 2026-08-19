@@ -141,7 +141,7 @@ export function OpsMap({
 }: OpsMapProps) {
   const v: Viewport = useMemo(() => ({ ...GULF_VIEW, width: W, height: H }), []);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(1.35);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const drag = useRef<{ x: number; y: number; px: number; py: number; moved: boolean } | null>(null);
   const [hovered, setHovered] = useState<{ asset: Asset; x: number; y: number } | null>(null);
