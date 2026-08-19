@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   AlertTriangle,
@@ -17,6 +17,10 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { OpsLink, useOpsBase } from "@/components/ops/ops-nav";
+import { useAuth } from "@/lib/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 const NAV = [
   { to: "/", label: "Operations Overview", icon: LayoutGrid },
@@ -61,6 +65,20 @@ export function AppShell({
 }) {
   const { dark, toggle } = useTheme();
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const base = useOpsBase();
+  const isDemo = base === "/demo";
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const href = (to: string) => (to === "/" ? base : `${base}${to}`);
+
+  async function signOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
 
   return (
     <div
@@ -83,9 +101,10 @@ export function AppShell({
         </div>
         <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
           {NAV.map((item) => {
-            const active = item.to === "/" ? path === "/" : path.startsWith(item.to);
+            const target = href(item.to);
+            const active = item.to === "/" ? path === target || path === `${target}/` : path.startsWith(target);
             return (
-              <Link
+              <OpsLink
                 key={item.to}
                 to={item.to}
                 className={cn(
@@ -97,20 +116,34 @@ export function AppShell({
               >
                 <item.icon className="size-4 shrink-0" />
                 {item.label}
-              </Link>
+              </OpsLink>
             );
           })}
         </nav>
         <div className="border-t p-3 text-[11px] text-muted-foreground">
           <div className="flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-risk-monitor" />
-            Sample Gulf dataset active
+            <span className={cn("size-1.5 rounded-full", isDemo ? "bg-risk-elevated" : "bg-risk-monitor")} />
+            {isDemo ? "Synthetic Gulf dataset" : "Tenant dataset"}
           </div>
           <div className="mt-1">Forecast refreshed 4 min ago</div>
+          <Link to="/" className="mt-2 inline-block text-[11px] text-primary hover:underline">
+            ← Back to site
+          </Link>
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
+        {isDemo ? (
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-risk-elevated/40 bg-risk-elevated/10 px-4 py-1.5 text-[11px] text-risk-elevated">
+            <span className="font-semibold tracking-wide uppercase">Demo data</span>
+            <span className="text-muted-foreground">
+              Synthetic Gulf estate and a fictional storm. Not an operational forecast — do not use for decisions.
+            </span>
+            <Link to="/auth" className="ml-auto font-medium text-primary hover:underline">
+              Sign in with Microsoft to use tenant data →
+            </Link>
+          </div>
+        ) : null}
         <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b bg-surface/95 px-4 backdrop-blur">
           <div className="lg:hidden">
             <select
@@ -119,7 +152,7 @@ export function AppShell({
               onChange={(e) => (window.location.href = e.target.value)}
             >
               {NAV.map((n) => (
-                <option key={n.to} value={n.to}>
+                <option key={n.to} value={href(n.to)}>
                   {n.label}
                 </option>
               ))}
@@ -141,15 +174,34 @@ export function AppShell({
             >
               {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </button>
-            <div className="flex items-center gap-2 border-l pl-3">
-              <div className="grid size-7 place-items-center rounded-full bg-secondary text-[11px] font-medium">
-                RM
+            {auth.user ? (
+              <div className="flex items-center gap-2 border-l pl-3">
+                <div className="grid size-7 place-items-center rounded-full bg-secondary text-[11px] font-medium">
+                  {auth.initials}
+                </div>
+                <div className="hidden text-[11px] leading-tight sm:block">
+                  <div className="max-w-[160px] truncate font-medium">{auth.displayName}</div>
+                  <div className="text-muted-foreground">
+                    {auth.provider === "azure" ? "Microsoft Entra ID" : "Email sign-in"}
+                  </div>
+                </div>
+                <button
+                  onClick={() => void signOut()}
+                  className="ml-1 rounded-sm border px-2 py-1 text-[11px] text-muted-foreground hover:bg-accent hover:text-foreground"
+                >
+                  Sign out
+                </button>
               </div>
-              <div className="hidden text-[11px] leading-tight sm:block">
-                <div className="font-medium">R. Marsh</div>
-                <div className="text-muted-foreground">Operator · Entra ID</div>
+            ) : (
+              <div className="flex items-center gap-2 border-l pl-3">
+                <Link
+                  to="/auth"
+                  className="rounded-sm bg-primary px-2.5 py-1.5 text-[11px] font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Sign in
+                </Link>
               </div>
-            </div>
+            )}
           </div>
         </header>
         <main className={cn("min-w-0 flex-1", fullHeight && "xl:min-h-0 xl:overflow-hidden")}>{children}</main>
