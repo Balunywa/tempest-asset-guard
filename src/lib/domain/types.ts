@@ -121,3 +121,99 @@ export interface GeospatialLayer {
   updatedLabel: string;
   defaultOn: boolean;
 }
+
+// ---------------------------------------------------------------------------
+// Response posture — the decision state of the estate, not just the hazard.
+// ---------------------------------------------------------------------------
+
+/** Lead-time decision gates, expressed as hours before forecast onset. */
+export type GateId = "T-120" | "T-96" | "T-72" | "T-48" | "T-24";
+
+export type GateState = "not_started" | "in_progress" | "complete" | "not_required";
+
+export interface PostureGate {
+  id: GateId;
+  leadHours: number;
+  label: string;
+  description: string;
+}
+
+export type PostureLevel = 0 | 1 | 2 | 3 | 4;
+
+export interface AssetPosture {
+  assetId: string;
+  /** 0 normal · 1 watch · 2 prepare · 3 down-man · 4 evacuate & shut in */
+  level: PostureLevel;
+  gates: Record<GateId, GateState>;
+  productionStatus: OperatingStatus;
+  /** Personnel on board — manned facilities only. */
+  pobCurrent: number | null;
+  pobNormal: number | null;
+  decisionOwner: string;
+  /** Hours remaining until the next gate must be decided. */
+  nextGate: GateId | null;
+  nextGateDueHours: number | null;
+  lastDecision: { action: string; by: string; atIso: string } | null;
+}
+
+// ---------------------------------------------------------------------------
+// Configurable operational thresholds
+// ---------------------------------------------------------------------------
+
+export type ThresholdMetric = "wind" | "rain" | "eta" | "score" | "distance";
+export type ThresholdComparator = "gte" | "lte";
+
+export interface ThresholdRule {
+  id: string;
+  name: string;
+  assetTypes: AssetType[];
+  metric: ThresholdMetric;
+  comparator: ThresholdComparator;
+  value: number;
+  /** Rule only applies to assets already scoring at or above this exposure. */
+  appliesAboveScore: number;
+  severity: AlertSeverity;
+  action: string;
+  owner: string;
+  enabled: boolean;
+  builtIn: boolean;
+}
+
+export interface ThresholdBreach {
+  ruleId: string;
+  ruleName: string;
+  assetId: string;
+  metric: ThresholdMetric;
+  observed: number;
+  threshold: number;
+  comparator: ThresholdComparator;
+  severity: AlertSeverity;
+  action: string;
+  owner: string;
+  hoursToImpact: number | null;
+}
+
+// ---------------------------------------------------------------------------
+// Forecast uncertainty and cycle-over-cycle change
+// ---------------------------------------------------------------------------
+
+export interface EnsembleMember {
+  id: string;
+  label: string;
+  /** [lon, lat] positions, analysis time through the horizon. */
+  track: Array<[number, number]>;
+}
+
+export interface CycleShift {
+  currentCycle: string;
+  previousCycle: string;
+  /** Along-track displacement of the 48 h position, miles. */
+  shiftMi: number;
+  shiftBearingDeg: number;
+  shiftDirection: string;
+  /** Change in peak forecast intensity, mph. */
+  intensityDeltaMph: number;
+  /** Change in 72 h cone radius, miles. */
+  coneDeltaMi: number;
+  summary: string;
+}
