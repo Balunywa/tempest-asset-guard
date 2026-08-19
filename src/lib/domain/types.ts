@@ -62,6 +62,13 @@ export interface WeatherEvent {
   modelSource: string;
   updatedAtIso: string;
   expectedLandfall: string;
+  /** Forecast cycle label, e.g. "18Z Tue". */
+  cycleId?: string;
+  /** Perturbed ensemble members conveying track spread. */
+  ensemble?: EnsembleMember[];
+  /** The previous cycle's centerline, for cycle-over-cycle comparison. */
+  previousForecast?: ForecastPoint[];
+  cycleShift?: CycleShift;
   history: Array<[number, number]>;
   forecast: ForecastPoint[];
 }
