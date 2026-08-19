@@ -310,7 +310,7 @@ export default function GeoMap({
     const container = containerRef.current;
     const map = new maplibregl.Map({
       container,
-      style: basemapStyle(satellite ? "satellite" : "dark"),
+      style: basemapStyle(activeBasemap),
       bounds: GULF_BOUNDS,
       fitBoundsOptions: { padding: 24 },
       attributionControl: false,
