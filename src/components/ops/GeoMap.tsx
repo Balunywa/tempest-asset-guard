@@ -315,11 +315,8 @@ export default function GeoMap({
     map.touchZoomRotate.disableRotation();
     mapRef.current = map;
 
-    map.on("move", () => {
-      setZoomLevel(map.getZoom());
-      const c = map.getCenter();
-      void c;
-    });
+    setZoomLevel(map.getZoom());
+    map.on("move", () => setZoomLevel(map.getZoom()));
     map.on("mousemove", (e: maplibregl.MapMouseEvent) => setCursor({ lon: e.lngLat.lng, lat: e.lngLat.lat }));
     map.on("mouseout", () => setCursor(null));
     map.on("load", () => setReady(true));
