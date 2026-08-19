@@ -760,7 +760,28 @@ export default function GeoMap({
         </div>
       )}
 
-      <div className="absolute top-3 right-3 flex flex-col gap-1 rounded-md border bg-popover/90 p-1 backdrop-blur">
+      <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
+        <div className="flex overflow-hidden rounded-md border bg-popover/90 backdrop-blur">
+          {(
+            [
+              ["dark", "Map"],
+              ["bathymetry", "Ocean"],
+              ["satellite", "Satellite"],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              onClick={() => setBasemap(id)}
+              disabled={satellite && id !== "satellite"}
+              className={`px-2 py-1 text-[10px] tracking-wide uppercase transition-colors disabled:opacity-40 ${
+                activeBasemap === id ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/60"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-col gap-1 rounded-md border bg-popover/90 p-1 backdrop-blur">
         <button
           className="rounded-sm p-1.5 hover:bg-accent"
           onClick={() => mapRef.current?.zoomIn()}
