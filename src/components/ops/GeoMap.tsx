@@ -218,6 +218,35 @@ export default function GeoMap({
     };
   }, [event]);
 
+  /** Ensemble spread: each member's centerline, conveying track uncertainty. */
+  const ensembleData: FeatureCollection = useMemo(() => {
+    const members = event.ensemble ?? [];
+    return {
+      type: "FeatureCollection",
+      features: members.map(
+        (m) => feature({ type: "LineString", coordinates: m.track }, { id: m.id }) as Feature,
+      ),
+    };
+  }, [event]);
+
+  /** Previous forecast cycle, for cycle-over-cycle comparison. */
+  const previousData = useMemo(() => {
+    const prev = event.previousForecast ?? [];
+    if (prev.length < 2) return { line: empty(), cone: empty() };
+    return {
+      line: {
+        type: "FeatureCollection",
+        features: [feature({ type: "LineString", coordinates: prev.map((p) => [p.lon, p.lat]) })],
+      } as FeatureCollection,
+      cone: {
+        type: "FeatureCollection",
+        features: [
+          feature(conePolygon(prev.map((p) => ({ lon: p.lon, lat: p.lat, radiusMi: p.coneRadiusMi })))),
+        ],
+      } as FeatureCollection,
+    };
+  }, [event]);
+
   const windData: FeatureCollection = useMemo(() => {
     const scale = pos.windMph / 130;
     const rings = [
@@ -316,6 +345,9 @@ export default function GeoMap({
 
     src("rain", empty());
     src("flood", empty());
+    src("prev-cone", empty());
+    src("ensemble", empty());
+    src("prev-track", empty());
     src("cone", empty());
     src("wind", empty());
     src("history", empty());
@@ -340,6 +372,38 @@ export default function GeoMap({
       type: "fill",
       source: "flood",
       paint: { "fill-color": token("--color-flood", "#22d3ee"), "fill-opacity": 0.18 },
+    });
+    add({
+      id: "prev-cone-line",
+      type: "line",
+      source: "prev-cone",
+      paint: {
+        "line-color": token("--color-muted-foreground", "#94a3b8"),
+        "line-opacity": 0.35,
+        "line-width": 1,
+        "line-dasharray": [2, 3],
+      },
+    });
+    add({
+      id: "ensemble-line",
+      type: "line",
+      source: "ensemble",
+      paint: {
+        "line-color": token("--color-cone", "#93c5fd"),
+        "line-opacity": 0.32,
+        "line-width": 0.9,
+      },
+    });
+    add({
+      id: "prev-track-line",
+      type: "line",
+      source: "prev-track",
+      paint: {
+        "line-color": token("--color-muted-foreground", "#94a3b8"),
+        "line-opacity": 0.75,
+        "line-width": 1.6,
+        "line-dasharray": [1, 2],
+      },
     });
     add({
       id: "wind-fill",
@@ -586,6 +650,9 @@ export default function GeoMap({
     set("forecast", trackData.forecast, !!layers["track"]);
     set("history", trackData.history, !!layers["track"] || !!layers["history"]);
     set("track-points", trackData.points, !!layers["track"]);
+    set("ensemble", ensembleData, !!layers["uncertainty"]);
+    set("prev-track", previousData.line, !!layers["previous"]);
+    set("prev-cone", previousData.cone, !!layers["previous"]);
     set("wind", windData, !!layers["wind"]);
     set("rain", rainData, !!layers["rain"]);
     set("flood", floodData, !!layers["flood"]);
@@ -597,6 +664,8 @@ export default function GeoMap({
     assetPoints,
     pipelineLines,
     trackData,
+    ensembleData,
+    previousData,
     windData,
     rainData,
     floodData,

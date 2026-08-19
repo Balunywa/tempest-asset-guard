@@ -18,6 +18,7 @@ import { Route as EventsRouteImport } from './routes/events'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as PostureRouteImport } from './routes/posture'
 import { Route as RiskRouteImport } from './routes/risk'
+import { Route as ThresholdsRouteImport } from './routes/thresholds'
 import { Route as TimelineRouteImport } from './routes/timeline'
 
 const IndexRoute = IndexRouteImport.update({
@@ -65,6 +66,11 @@ const RiskRoute = RiskRouteImport.update({
   path: '/risk',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ThresholdsRoute = ThresholdsRouteImport.update({
+  id: '/thresholds',
+  path: '/thresholds',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TimelineRoute = TimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
+  '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
 }
 export interface FileRoutesByTo {
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
+  '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
 }
 export interface FileRoutesById {
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
+  '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
 }
 export interface FileRouteTypes {
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/posture'
     | '/risk'
+    | '/thresholds'
     | '/timeline'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/posture'
     | '/risk'
+    | '/thresholds'
     | '/timeline'
   id:
     | '__root__'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/posture'
     | '/risk'
+    | '/thresholds'
     | '/timeline'
   fileRoutesById: FileRoutesById
 }
@@ -157,6 +169,7 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   PostureRoute: typeof PostureRoute
   RiskRoute: typeof RiskRoute
+  ThresholdsRoute: typeof ThresholdsRoute
   TimelineRoute: typeof TimelineRoute
 }
 
@@ -225,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RiskRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/thresholds': {
+      id: '/thresholds'
+      path: '/thresholds'
+      fullPath: '/thresholds'
+      preLoaderRoute: typeof ThresholdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/timeline': {
       id: '/timeline'
       path: '/timeline'
@@ -245,6 +265,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   PostureRoute: PostureRoute,
   RiskRoute: RiskRoute,
+  ThresholdsRoute: ThresholdsRoute,
   TimelineRoute: TimelineRoute,
 }
 export const routeTree = rootRouteImport
