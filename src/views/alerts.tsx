@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Link } from "@tanstack/react-router";
 
+import { OpsLink } from "@/components/ops/ops-nav";
 import { AppShell, PageHeader } from "@/components/ops/AppShell";
 import { alertsQuery, assetsQuery, thresholdRulesQuery, useOpsSnapshot } from "@/lib/hooks/use-ops-data";
 import { METRIC_LABEL, METRIC_UNIT, evaluateRules } from "@/lib/services/thresholds";
@@ -89,7 +89,7 @@ export function AlertsPage() {
             className="rounded-sm border px-2.5 py-1.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
           >
             Configure thresholds
-          </Link>
+          </OpsLink>
         }
       />
       <div className="space-y-4 p-4">

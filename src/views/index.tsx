@@ -1,8 +1,8 @@
-import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { ArrowRight, Filter, Sparkles, TrendingUp, X } from "lucide-react";
 
+import { OpsLink } from "@/components/ops/ops-nav";
 import { AppShell } from "@/components/ops/AppShell";
 import { OpsMap } from "@/components/ops/OpsMap";
 import { AssetDetailPanel } from "@/components/ops/AssetDetailPanel";
@@ -148,7 +148,7 @@ export function OverviewPage() {
                 className="inline-flex items-center gap-2 rounded-sm border border-primary/40 bg-primary/10 px-2.5 py-1.5 text-[11px] font-medium text-primary hover:bg-primary/15"
               >
                 <Sparkles className="size-3.5" /> Operations assistant
-              </Link>
+              </OpsLink>
             </div>
           </div>
           <div className="mt-2.5 grid grid-cols-2 border-t sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
@@ -229,9 +229,9 @@ export function OverviewPage() {
             <div className="flex h-[420px] min-h-0 flex-col bg-background xl:h-auto">
               <div className="flex shrink-0 items-center justify-between border-b px-4 py-2">
                 <span className="label-xs">Highest exposure — ranked</span>
-                <Link to="/risk" className="text-[11px] text-primary hover:underline">
+                <OpsLink to="/risk" className="text-[11px] text-primary hover:underline">
                   Full asset risk register
-                </Link>
+                </OpsLink>
               </div>
               <div className="min-h-0 flex-1 overflow-y-auto">
                 <table className="w-full text-xs">
@@ -335,9 +335,9 @@ export function OverviewPage() {
                 <div className="p-4">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="label-xs">Response posture</span>
-                    <Link to="/posture" className="text-[11px] text-primary hover:underline">
+                    <OpsLink to="/posture" className="text-[11px] text-primary hover:underline">
                       Open gate board
-                    </Link>
+                    </OpsLink>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     {postureRollup.map((p) => (
@@ -360,9 +360,9 @@ export function OverviewPage() {
                 <div className="p-4">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="label-xs">Threshold breaches</span>
-                    <Link to="/thresholds" className="text-[11px] text-primary hover:underline">
+                    <OpsLink to="/thresholds" className="text-[11px] text-primary hover:underline">
                       Configure
-                    </Link>
+                    </OpsLink>
                   </div>
                   <ul className="space-y-1.5">
                     {breaches.slice(0, 5).map((b, i) => (
@@ -387,9 +387,9 @@ export function OverviewPage() {
                 <div>
                   <div className="flex items-center justify-between px-4 py-2.5">
                     <span className="label-xs">Active alerts</span>
-                    <Link to="/alerts" className="text-[11px] text-primary hover:underline">
+                    <OpsLink to="/alerts" className="text-[11px] text-primary hover:underline">
                       All alerts
-                    </Link>
+                    </OpsLink>
                   </div>
                   <ul className="divide-y border-t">
                     {openAlerts.slice(0, 6).map((a) => (
@@ -424,7 +424,7 @@ export function OverviewPage() {
                   className="flex items-center gap-1 px-4 py-3 text-[11px] text-primary hover:underline"
                 >
                   Scrub the forecast timeline <ArrowRight className="size-3" />
-                </Link>
+                </OpsLink>
               </div>
             )}
           </div>
