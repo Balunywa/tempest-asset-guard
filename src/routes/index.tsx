@@ -49,7 +49,7 @@ function LandingPage() {
               to="/demo"
               className="rounded-sm bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
-              Launch demo — no sign-in
+              Launch demo, no sign-in
             </Link>
             <Link to="/auth" className="rounded-sm border px-5 py-2.5 text-sm hover:bg-accent">
               Request deployment
@@ -76,7 +76,7 @@ function LandingPage() {
             <Gauge className="size-4 text-primary" />
             <h3 className="mt-3 text-sm font-semibold">Explainable scoring</h3>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              Proximity, wind exposure, precipitation and criticality — each factor's contribution is shown,
+              Proximity, wind exposure, precipitation and criticality. Each factor's contribution is shown,
               so the number survives scrutiny in a decision meeting.
             </p>
           </div>
@@ -123,7 +123,7 @@ function LandingPage() {
         <div className="mx-auto max-w-6xl px-5 py-16">
           <h2 className="text-xl font-semibold tracking-tight">Open the console</h2>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            The demo is unrestricted — no form, no email gate. It runs on a synthetic Gulf estate and a
+            The demo is unrestricted. No form, no email gate. It runs on a synthetic Gulf estate and a
             fictional hurricane so you can drive every surface immediately.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
