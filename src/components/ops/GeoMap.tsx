@@ -6,7 +6,7 @@ import type { Feature, FeatureCollection } from "geojson";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import type { Asset, AssetRisk, RiskLevel, WeatherEvent } from "@/lib/domain/types";
-import { basemapProviderLabel, basemapStyle } from "@/lib/map/basemap";
+import { basemapProviderLabel, basemapStyle, type BasemapId } from "@/lib/map/basemap";
 import { circlePolygon, conePolygon, empty, feature, quadrantPolygon } from "@/lib/map/geojson";
 import { riskColorVar } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -146,6 +146,9 @@ export default function GeoMap({
   const [hovered, setHovered] = useState<{ asset: Asset; x: number; y: number } | null>(null);
 
   const satellite = !!layers["satellite"];
+  const [basemap, setBasemap] = useState<BasemapId>("dark");
+  // the satellite layer toggle always wins over the manual basemap picker
+  const activeBasemap: BasemapId = satellite ? "satellite" : basemap;
   const selectRef = useRef(onSelect);
   selectRef.current = onSelect;
   const assetsRef = useRef(assets);
@@ -307,7 +310,7 @@ export default function GeoMap({
     const container = containerRef.current;
     const map = new maplibregl.Map({
       container,
-      style: basemapStyle(satellite ? "satellite" : "dark"),
+      style: basemapStyle(activeBasemap),
       bounds: GULF_BOUNDS,
       fitBoundsOptions: { padding: 24 },
       attributionControl: false,
@@ -659,7 +662,7 @@ export default function GeoMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-    const next = satellite ? "satellite" : "dark";
+    const next = activeBasemap;
     if (lastBasemap.current === null) {
       lastBasemap.current = next;
       return;
@@ -667,11 +670,12 @@ export default function GeoMap({
     if (lastBasemap.current === next) return;
     lastBasemap.current = next;
     map.setStyle(basemapStyle(next));
-    map.once("styledata", () => {
+    // vector styles finish asynchronously; rebuild once the new style is idle
+    map.once("idle", () => {
       buildLayers();
       setStyleVersion((v) => v + 1);
     });
-  }, [satellite, ready, buildLayers]);
+  }, [activeBasemap, ready, buildLayers]);
 
   // ------------------------------------------------------------ data sync
   useEffect(() => {
@@ -756,7 +760,28 @@ export default function GeoMap({
         </div>
       )}
 
-      <div className="absolute top-3 right-3 flex flex-col gap-1 rounded-md border bg-popover/90 p-1 backdrop-blur">
+      <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5">
+        <div className="flex overflow-hidden rounded-md border bg-popover/90 backdrop-blur">
+          {(
+            [
+              ["dark", "Map"],
+              ["bathymetry", "Ocean"],
+              ["satellite", "Satellite"],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              onClick={() => setBasemap(id)}
+              disabled={satellite && id !== "satellite"}
+              className={`px-2 py-1 text-[10px] tracking-wide uppercase transition-colors disabled:opacity-40 ${
+                activeBasemap === id ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/60"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-col gap-1 rounded-md border bg-popover/90 p-1 backdrop-blur">
         <button
           className="rounded-sm p-1.5 hover:bg-accent"
           onClick={() => mapRef.current?.zoomIn()}
@@ -774,6 +799,7 @@ export default function GeoMap({
         <button className="rounded-sm p-1.5 hover:bg-accent" onClick={resetView} aria-label="Reset view">
           <Crosshair className="size-4" />
         </button>
+        </div>
       </div>
 
       <div className="num pointer-events-none absolute bottom-3 left-3 rounded-md border bg-popover/85 px-2.5 py-1.5 text-[10px] text-muted-foreground backdrop-blur">
