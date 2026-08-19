@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as AssetsRouteImport } from './routes/assets'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CopilotRouteImport } from './routes/copilot'
 import { Route as DeploymentRouteImport } from './routes/deployment'
 import { Route as EventsRouteImport } from './routes/events'
@@ -61,6 +62,11 @@ const AlertsRoute = AlertsRouteImport.update({
 const AssetsRoute = AssetsRouteImport.update({
   id: '/assets',
   path: '/assets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CopilotRoute = CopilotRouteImport.update({
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
   '/assets': typeof AssetsRoute
+  '/auth': typeof AuthRoute
   '/copilot': typeof CopilotRoute
   '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
@@ -256,6 +263,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
   '/assets': typeof AssetsRoute
+  '/auth': typeof AuthRoute
   '/copilot': typeof CopilotRoute
   '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
@@ -293,6 +301,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/alerts': typeof AlertsRoute
   '/assets': typeof AssetsRoute
+  '/auth': typeof AuthRoute
   '/copilot': typeof CopilotRoute
   '/deployment': typeof DeploymentRoute
   '/events': typeof EventsRoute
@@ -330,6 +339,7 @@ export interface FileRouteTypes {
     | '/'
     | '/alerts'
     | '/assets'
+    | '/auth'
     | '/copilot'
     | '/deployment'
     | '/events'
@@ -365,6 +375,7 @@ export interface FileRouteTypes {
     | '/'
     | '/alerts'
     | '/assets'
+    | '/auth'
     | '/copilot'
     | '/deployment'
     | '/events'
@@ -401,6 +412,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/alerts'
     | '/assets'
+    | '/auth'
     | '/copilot'
     | '/deployment'
     | '/events'
@@ -438,6 +450,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AlertsRoute: typeof AlertsRoute
   AssetsRoute: typeof AssetsRoute
+  AuthRoute: typeof AuthRoute
   CopilotRoute: typeof CopilotRoute
   DeploymentRoute: typeof DeploymentRoute
   EventsRoute: typeof EventsRoute
@@ -487,6 +500,13 @@ declare module '@tanstack/react-router' {
       path: '/assets'
       fullPath: '/assets'
       preLoaderRoute: typeof AssetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/copilot': {
@@ -738,6 +758,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AlertsRoute: AlertsRoute,
   AssetsRoute: AssetsRoute,
+  AuthRoute: AuthRoute,
   CopilotRoute: CopilotRoute,
   DeploymentRoute: DeploymentRoute,
   EventsRoute: EventsRoute,
