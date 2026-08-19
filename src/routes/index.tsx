@@ -5,7 +5,7 @@ import { Card, Section, SiteChrome } from "@/components/site/SiteChrome";
 
 const TITLE = "Gulf Hurricane & Asset Impact Intelligence | Azure Accelerator";
 const DESC =
-  "Join tropical forecasts to your offshore estate: explainable asset risk scoring, T-gate response posture and forecast uncertainty — deployable into your own Azure tenant.";
+  "Join tropical forecasts to your offshore estate with explainable asset risk scoring, T-gate response posture and forecast uncertainty, deployable into your own Azure tenant.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,7 +37,7 @@ function LandingPage() {
             Oil &amp; gas industry accelerator on Microsoft Azure
           </p>
           <h1 className="mt-4 max-w-4xl text-4xl leading-[1.1] font-semibold tracking-tight sm:text-5xl">
-            Know which platforms you shut in — and when — before the cone reaches them.
+            Hurricane decisions for your offshore estate, ranked by asset and ready before the next cycle.
           </h1>
           <p className="mt-5 max-w-2xl text-base text-muted-foreground">
             Gulf of Mexico hurricane and asset impact intelligence. The accelerator joins tropical forecasts
@@ -49,7 +49,7 @@ function LandingPage() {
               to="/demo"
               className="rounded-sm bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
-              Launch demo — no sign-in
+              Launch demo, no sign-in
             </Link>
             <Link to="/auth" className="rounded-sm border px-5 py-2.5 text-sm hover:bg-accent">
               Request deployment
@@ -76,7 +76,7 @@ function LandingPage() {
             <Gauge className="size-4 text-primary" />
             <h3 className="mt-3 text-sm font-semibold">Explainable scoring</h3>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              Proximity, wind exposure, precipitation and criticality — each factor's contribution is shown,
+              Proximity, wind exposure, precipitation and criticality. Each factor's contribution is shown,
               so the number survives scrutiny in a decision meeting.
             </p>
           </div>
@@ -123,7 +123,7 @@ function LandingPage() {
         <div className="mx-auto max-w-6xl px-5 py-16">
           <h2 className="text-xl font-semibold tracking-tight">Open the console</h2>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            The demo is unrestricted — no form, no email gate. It runs on a synthetic Gulf estate and a
+            The demo is unrestricted. No form, no email gate. It runs on a synthetic Gulf estate and a
             fictional hurricane so you can drive every surface immediately.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
