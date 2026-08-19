@@ -174,15 +174,34 @@ export function AppShell({
             >
               {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </button>
-            <div className="flex items-center gap-2 border-l pl-3">
-              <div className="grid size-7 place-items-center rounded-full bg-secondary text-[11px] font-medium">
-                RM
+            {auth.user ? (
+              <div className="flex items-center gap-2 border-l pl-3">
+                <div className="grid size-7 place-items-center rounded-full bg-secondary text-[11px] font-medium">
+                  {auth.initials}
+                </div>
+                <div className="hidden text-[11px] leading-tight sm:block">
+                  <div className="max-w-[160px] truncate font-medium">{auth.displayName}</div>
+                  <div className="text-muted-foreground">
+                    {auth.provider === "azure" ? "Microsoft Entra ID" : "Email sign-in"}
+                  </div>
+                </div>
+                <button
+                  onClick={() => void signOut()}
+                  className="ml-1 rounded-sm border px-2 py-1 text-[11px] text-muted-foreground hover:bg-accent hover:text-foreground"
+                >
+                  Sign out
+                </button>
               </div>
-              <div className="hidden text-[11px] leading-tight sm:block">
-                <div className="font-medium">R. Marsh</div>
-                <div className="text-muted-foreground">Operator · Entra ID</div>
+            ) : (
+              <div className="flex items-center gap-2 border-l pl-3">
+                <Link
+                  to="/auth"
+                  className="rounded-sm bg-primary px-2.5 py-1.5 text-[11px] font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Sign in
+                </Link>
               </div>
-            </div>
+            )}
           </div>
         </header>
         <main className={cn("min-w-0 flex-1", fullHeight && "xl:min-h-0 xl:overflow-hidden")}>{children}</main>
