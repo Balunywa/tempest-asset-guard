@@ -356,9 +356,17 @@ export default function GeoMap({
 
 
   /** (Re)build every operational layer — also runs after a basemap style swap. */
+  const buildRetryRef = useRef<(() => void) | null>(null);
   const buildLayers = useCallback(() => {
     const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map) return;
+    if (!map.isStyleLoaded()) {
+      // style still parsing (slow tiles/glyphs): rebuild as soon as it settles,
+      // otherwise the operational layers are silently dropped.
+      map.once("idle", () => buildRetryRef.current?.());
+      return;
+    }
+
 
     const src = (id: string, data: FeatureCollection) => {
       const existing = map.getSource(id) as maplibregl.GeoJSONSource | undefined;
