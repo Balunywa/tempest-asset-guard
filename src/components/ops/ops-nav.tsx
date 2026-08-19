@@ -21,5 +21,6 @@ type OpsLinkProps = Omit<ComponentPropsWithoutRef<"a">, "href"> & {
 export function OpsLink({ to, ...rest }: OpsLinkProps) {
   const base = useOpsBase();
   const href = to === "/" ? base : `${base}${to}`;
-  return <Link to={href as LinkProps["to"]} {...rest} />;
+  const AnyLink = Link as unknown as (props: Record<string, unknown>) => JSX.Element;
+  return <AnyLink to={href} {...rest} />;
 }
