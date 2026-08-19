@@ -20,6 +20,7 @@ import { Route as EventsRouteImport } from './routes/events'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as PostureRouteImport } from './routes/posture'
 import { Route as RiskRouteImport } from './routes/risk'
+import { Route as SolutionRouteImport } from './routes/solution'
 import { Route as ThresholdsRouteImport } from './routes/thresholds'
 import { Route as TimelineRouteImport } from './routes/timeline'
 import { Route as AuthCallbackRouteImport } from './routes/auth_.callback'
@@ -98,6 +99,11 @@ const PostureRoute = PostureRouteImport.update({
 const RiskRoute = RiskRouteImport.update({
   id: '/risk',
   path: '/risk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolutionRoute = SolutionRouteImport.update({
+  id: '/solution',
+  path: '/solution',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ThresholdsRoute = ThresholdsRouteImport.update({
@@ -240,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
+  '/solution': typeof SolutionRoute
   '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -277,6 +284,7 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
+  '/solution': typeof SolutionRoute
   '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -316,6 +324,7 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/posture': typeof PostureRoute
   '/risk': typeof RiskRoute
+  '/solution': typeof SolutionRoute
   '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
   '/auth_/callback': typeof AuthCallbackRoute
@@ -355,6 +364,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/posture'
     | '/risk'
+    | '/solution'
     | '/thresholds'
     | '/timeline'
     | '/auth/callback'
@@ -392,6 +402,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/posture'
     | '/risk'
+    | '/solution'
     | '/thresholds'
     | '/timeline'
     | '/auth/callback'
@@ -430,6 +441,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/posture'
     | '/risk'
+    | '/solution'
     | '/thresholds'
     | '/timeline'
     | '/auth_/callback'
@@ -469,6 +481,7 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   PostureRoute: typeof PostureRoute
   RiskRoute: typeof RiskRoute
+  SolutionRoute: typeof SolutionRoute
   ThresholdsRoute: typeof ThresholdsRoute
   TimelineRoute: typeof TimelineRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -562,6 +575,13 @@ declare module '@tanstack/react-router' {
       path: '/risk'
       fullPath: '/risk'
       preLoaderRoute: typeof RiskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solution': {
+      id: '/solution'
+      path: '/solution'
+      fullPath: '/solution'
+      preLoaderRoute: typeof SolutionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/thresholds': {
@@ -785,6 +805,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   PostureRoute: PostureRoute,
   RiskRoute: RiskRoute,
+  SolutionRoute: SolutionRoute,
   ThresholdsRoute: ThresholdsRoute,
   TimelineRoute: TimelineRoute,
   AuthCallbackRoute: AuthCallbackRoute,
