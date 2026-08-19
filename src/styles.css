@@ -56,6 +56,22 @@
   --color-cone: var(--cone);
   --color-rain: var(--rain);
   --color-flood: var(--flood);
+  --color-ocean-deep: var(--ocean-deep);
+  --color-shelf: var(--shelf);
+  --color-shelf-line: var(--shelf-line);
+  --color-shoreline: var(--shoreline);
+  --color-grid-label: var(--grid-label);
+  --color-place: var(--place);
+  --color-water-label: var(--water-label);
+  --color-region-label: var(--region-label);
+  --color-track: var(--track);
+  --color-cat-td: var(--cat-td);
+  --color-cat-ts: var(--cat-ts);
+  --color-cat1: var(--cat1);
+  --color-cat2: var(--cat2);
+  --color-cat3: var(--cat3);
+  --color-cat4: var(--cat4);
+  --color-cat5: var(--cat5);
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -113,6 +129,22 @@
   --cone: oklch(0.65 0.1 250);
   --rain: oklch(0.62 0.13 200);
   --flood: oklch(0.6 0.12 265);
+  --ocean-deep: oklch(0.86 0.04 240);
+  --shelf: oklch(0.93 0.025 225);
+  --shelf-line: oklch(0.7 0.05 235);
+  --shoreline: oklch(0.72 0.03 150);
+  --grid-label: oklch(0.55 0.02 245);
+  --place: oklch(0.42 0.02 245);
+  --water-label: oklch(0.6 0.05 235);
+  --region-label: oklch(0.55 0.03 140);
+  --track: oklch(0.45 0.02 250);
+  --cat-td: oklch(0.72 0.06 240);
+  --cat-ts: oklch(0.75 0.13 150);
+  --cat1: oklch(0.82 0.14 95);
+  --cat2: oklch(0.78 0.16 70);
+  --cat3: oklch(0.68 0.19 45);
+  --cat4: oklch(0.6 0.21 25);
+  --cat5: oklch(0.52 0.22 5);
 
   --chart-1: oklch(0.55 0.16 250);
   --chart-2: oklch(0.63 0.14 200);
@@ -168,6 +200,22 @@
   --cone: oklch(0.7 0.11 250);
   --rain: oklch(0.66 0.13 200);
   --flood: oklch(0.64 0.13 268);
+  --ocean-deep: oklch(0.19 0.032 248);
+  --shelf: oklch(0.3 0.045 235);
+  --shelf-line: oklch(0.5 0.05 230);
+  --shoreline: oklch(0.45 0.03 150);
+  --grid-label: oklch(0.58 0.02 245);
+  --place: oklch(0.75 0.015 245);
+  --water-label: oklch(0.55 0.04 235);
+  --region-label: oklch(0.62 0.03 145);
+  --track: oklch(0.92 0.01 250);
+  --cat-td: oklch(0.7 0.06 240);
+  --cat-ts: oklch(0.78 0.14 150);
+  --cat1: oklch(0.87 0.15 95);
+  --cat2: oklch(0.82 0.16 70);
+  --cat3: oklch(0.74 0.19 45);
+  --cat4: oklch(0.67 0.21 25);
+  --cat5: oklch(0.6 0.23 8);
 
   --chart-1: oklch(0.68 0.14 245);
   --chart-2: oklch(0.7 0.13 195);
