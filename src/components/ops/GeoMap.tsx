@@ -717,8 +717,11 @@ export default function GeoMap({
     if (a) map.easeTo({ center: [a.lon, a.lat], zoom: Math.max(map.getZoom(), 6.5), duration: 700 });
   }, [selectedId, ready, assets]);
 
-  const resetView = () =>
+  const resetView = () => {
+    userMovedRef.current = false;
     mapRef.current?.fitBounds(GULF_BOUNDS, { padding: 24, duration: 600 });
+  };
+
 
   return (
     <div className={cn("relative overflow-hidden bg-ocean-deep", className)}>
