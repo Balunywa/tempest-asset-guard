@@ -65,6 +65,20 @@ export function AppShell({
 }) {
   const { dark, toggle } = useTheme();
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const base = useOpsBase();
+  const isDemo = base === "/demo";
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const href = (to: string) => (to === "/" ? base : `${base}${to}`);
+
+  async function signOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
 
   return (
     <div
