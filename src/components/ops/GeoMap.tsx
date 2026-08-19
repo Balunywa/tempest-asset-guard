@@ -644,9 +644,15 @@ export default function GeoMap({
 
   const [styleVersion, setStyleVersion] = useState(0);
 
+  buildRetryRef.current = () => {
+    buildLayers();
+    setStyleVersion((v) => v + 1);
+  };
+
   useEffect(() => {
     if (ready) buildLayers();
   }, [ready, buildLayers]);
+
 
   // basemap swap re-adds the operational layers on top of the new style
   const lastBasemap = useRef<string | null>(null);
