@@ -99,7 +99,7 @@ function markerPath(type: Asset["type"], size: number): string {
 
 /** NHC-style asymmetric wind-radii polygon from NE/SE/SW/NW radii (px). */
 function quadrantPath(cx: number, cy: number, q: number[]): string {
-  const [ne, se, sw, nw] = q;
+  const [ne = 0, se = 0, sw = 0, nw = 0] = q;
   const arc = (r: number, a0: number, a1: number) => {
     const steps = 10;
     let d = "";
@@ -269,7 +269,7 @@ export function OpsMap({
       { kt: 34, quad: [205, 180, 140, 155].map((m) => m * scale), opacity: 0.09, color: "var(--cat1)" },
       { kt: 50, quad: [125, 105, 78, 92].map((m) => m * scale), opacity: 0.12, color: "var(--cat3)" },
       { kt: 64, quad: [68, 58, 40, 48].map((m) => m * scale), opacity: 0.18, color: "var(--cat5)" },
-    ].filter((r) => r.quad[0] > 4);
+    ].filter((r) => (r.quad[0] ?? 0) > 4);
   }, [pos.windMph]);
 
   const labelZoom = zoom;
@@ -579,7 +579,7 @@ export function OpsMap({
                     />
                     <text
                       x={sx}
-                      y={sy - milesToPx(r.quad[3], v) - 4 * strokeScale}
+                      y={sy - milesToPx(r.quad[3] ?? 0, v) - 4 * strokeScale}
                       fontSize={9 * strokeScale}
                       textAnchor="middle"
                       className="num"
