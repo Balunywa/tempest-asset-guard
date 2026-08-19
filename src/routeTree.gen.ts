@@ -20,6 +20,28 @@ import { Route as PostureRouteImport } from './routes/posture'
 import { Route as RiskRouteImport } from './routes/risk'
 import { Route as ThresholdsRouteImport } from './routes/thresholds'
 import { Route as TimelineRouteImport } from './routes/timeline'
+import { Route as DemoIndexRouteImport } from './routes/demo.index'
+import { Route as DemoAlertsRouteImport } from './routes/demo.alerts'
+import { Route as DemoAssetsRouteImport } from './routes/demo.assets'
+import { Route as DemoCopilotRouteImport } from './routes/demo.copilot'
+import { Route as DemoDeploymentRouteImport } from './routes/demo.deployment'
+import { Route as DemoEventsRouteImport } from './routes/demo.events'
+import { Route as DemoMapRouteImport } from './routes/demo.map'
+import { Route as DemoPostureRouteImport } from './routes/demo.posture'
+import { Route as DemoRiskRouteImport } from './routes/demo.risk'
+import { Route as DemoThresholdsRouteImport } from './routes/demo.thresholds'
+import { Route as DemoTimelineRouteImport } from './routes/demo.timeline'
+import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
+import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/app.alerts'
+import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
+import { Route as AuthenticatedAppCopilotRouteImport } from './routes/_authenticated/app.copilot'
+import { Route as AuthenticatedAppDeploymentRouteImport } from './routes/_authenticated/app.deployment'
+import { Route as AuthenticatedAppEventsRouteImport } from './routes/_authenticated/app.events'
+import { Route as AuthenticatedAppMapRouteImport } from './routes/_authenticated/app.map'
+import { Route as AuthenticatedAppPostureRouteImport } from './routes/_authenticated/app.posture'
+import { Route as AuthenticatedAppRiskRouteImport } from './routes/_authenticated/app.risk'
+import { Route as AuthenticatedAppThresholdsRouteImport } from './routes/_authenticated/app.thresholds'
+import { Route as AuthenticatedAppTimelineRouteImport } from './routes/_authenticated/app.timeline'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,6 +98,119 @@ const TimelineRoute = TimelineRouteImport.update({
   path: '/timeline',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoIndexRoute = DemoIndexRouteImport.update({
+  id: '/demo/',
+  path: '/demo/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoAlertsRoute = DemoAlertsRouteImport.update({
+  id: '/demo/alerts',
+  path: '/demo/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoAssetsRoute = DemoAssetsRouteImport.update({
+  id: '/demo/assets',
+  path: '/demo/assets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoCopilotRoute = DemoCopilotRouteImport.update({
+  id: '/demo/copilot',
+  path: '/demo/copilot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoDeploymentRoute = DemoDeploymentRouteImport.update({
+  id: '/demo/deployment',
+  path: '/demo/deployment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoEventsRoute = DemoEventsRouteImport.update({
+  id: '/demo/events',
+  path: '/demo/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoMapRoute = DemoMapRouteImport.update({
+  id: '/demo/map',
+  path: '/demo/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoPostureRoute = DemoPostureRouteImport.update({
+  id: '/demo/posture',
+  path: '/demo/posture',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRiskRoute = DemoRiskRouteImport.update({
+  id: '/demo/risk',
+  path: '/demo/risk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoThresholdsRoute = DemoThresholdsRouteImport.update({
+  id: '/demo/thresholds',
+  path: '/demo/thresholds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoTimelineRoute = DemoTimelineRouteImport.update({
+  id: '/demo/timeline',
+  path: '/demo/timeline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
+  id: '/_authenticated/app/',
+  path: '/app/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppAlertsRoute = AuthenticatedAppAlertsRouteImport.update({
+  id: '/_authenticated/app/alerts',
+  path: '/app/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppAssetsRoute = AuthenticatedAppAssetsRouteImport.update({
+  id: '/_authenticated/app/assets',
+  path: '/app/assets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppCopilotRoute = AuthenticatedAppCopilotRouteImport.update({
+  id: '/_authenticated/app/copilot',
+  path: '/app/copilot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppDeploymentRoute =
+  AuthenticatedAppDeploymentRouteImport.update({
+    id: '/_authenticated/app/deployment',
+    path: '/app/deployment',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedAppEventsRoute = AuthenticatedAppEventsRouteImport.update({
+  id: '/_authenticated/app/events',
+  path: '/app/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppMapRoute = AuthenticatedAppMapRouteImport.update({
+  id: '/_authenticated/app/map',
+  path: '/app/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppPostureRoute = AuthenticatedAppPostureRouteImport.update({
+  id: '/_authenticated/app/posture',
+  path: '/app/posture',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppRiskRoute = AuthenticatedAppRiskRouteImport.update({
+  id: '/_authenticated/app/risk',
+  path: '/app/risk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppThresholdsRoute =
+  AuthenticatedAppThresholdsRouteImport.update({
+    id: '/_authenticated/app/thresholds',
+    path: '/app/thresholds',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedAppTimelineRoute =
+  AuthenticatedAppTimelineRouteImport.update({
+    id: '/_authenticated/app/timeline',
+    path: '/app/timeline',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +224,28 @@ export interface FileRoutesByFullPath {
   '/risk': typeof RiskRoute
   '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
+  '/demo/alerts': typeof DemoAlertsRoute
+  '/demo/assets': typeof DemoAssetsRoute
+  '/demo/copilot': typeof DemoCopilotRoute
+  '/demo/deployment': typeof DemoDeploymentRoute
+  '/demo/events': typeof DemoEventsRoute
+  '/demo/map': typeof DemoMapRoute
+  '/demo/posture': typeof DemoPostureRoute
+  '/demo/risk': typeof DemoRiskRoute
+  '/demo/thresholds': typeof DemoThresholdsRoute
+  '/demo/timeline': typeof DemoTimelineRoute
+  '/demo/': typeof DemoIndexRoute
+  '/app/alerts': typeof AuthenticatedAppAlertsRoute
+  '/app/assets': typeof AuthenticatedAppAssetsRoute
+  '/app/copilot': typeof AuthenticatedAppCopilotRoute
+  '/app/deployment': typeof AuthenticatedAppDeploymentRoute
+  '/app/events': typeof AuthenticatedAppEventsRoute
+  '/app/map': typeof AuthenticatedAppMapRoute
+  '/app/posture': typeof AuthenticatedAppPostureRoute
+  '/app/risk': typeof AuthenticatedAppRiskRoute
+  '/app/thresholds': typeof AuthenticatedAppThresholdsRoute
+  '/app/timeline': typeof AuthenticatedAppTimelineRoute
+  '/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -102,6 +259,28 @@ export interface FileRoutesByTo {
   '/risk': typeof RiskRoute
   '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
+  '/demo/alerts': typeof DemoAlertsRoute
+  '/demo/assets': typeof DemoAssetsRoute
+  '/demo/copilot': typeof DemoCopilotRoute
+  '/demo/deployment': typeof DemoDeploymentRoute
+  '/demo/events': typeof DemoEventsRoute
+  '/demo/map': typeof DemoMapRoute
+  '/demo/posture': typeof DemoPostureRoute
+  '/demo/risk': typeof DemoRiskRoute
+  '/demo/thresholds': typeof DemoThresholdsRoute
+  '/demo/timeline': typeof DemoTimelineRoute
+  '/demo': typeof DemoIndexRoute
+  '/app/alerts': typeof AuthenticatedAppAlertsRoute
+  '/app/assets': typeof AuthenticatedAppAssetsRoute
+  '/app/copilot': typeof AuthenticatedAppCopilotRoute
+  '/app/deployment': typeof AuthenticatedAppDeploymentRoute
+  '/app/events': typeof AuthenticatedAppEventsRoute
+  '/app/map': typeof AuthenticatedAppMapRoute
+  '/app/posture': typeof AuthenticatedAppPostureRoute
+  '/app/risk': typeof AuthenticatedAppRiskRoute
+  '/app/thresholds': typeof AuthenticatedAppThresholdsRoute
+  '/app/timeline': typeof AuthenticatedAppTimelineRoute
+  '/app': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,6 +295,28 @@ export interface FileRoutesById {
   '/risk': typeof RiskRoute
   '/thresholds': typeof ThresholdsRoute
   '/timeline': typeof TimelineRoute
+  '/demo/alerts': typeof DemoAlertsRoute
+  '/demo/assets': typeof DemoAssetsRoute
+  '/demo/copilot': typeof DemoCopilotRoute
+  '/demo/deployment': typeof DemoDeploymentRoute
+  '/demo/events': typeof DemoEventsRoute
+  '/demo/map': typeof DemoMapRoute
+  '/demo/posture': typeof DemoPostureRoute
+  '/demo/risk': typeof DemoRiskRoute
+  '/demo/thresholds': typeof DemoThresholdsRoute
+  '/demo/timeline': typeof DemoTimelineRoute
+  '/demo/': typeof DemoIndexRoute
+  '/_authenticated/app/alerts': typeof AuthenticatedAppAlertsRoute
+  '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRoute
+  '/_authenticated/app/copilot': typeof AuthenticatedAppCopilotRoute
+  '/_authenticated/app/deployment': typeof AuthenticatedAppDeploymentRoute
+  '/_authenticated/app/events': typeof AuthenticatedAppEventsRoute
+  '/_authenticated/app/map': typeof AuthenticatedAppMapRoute
+  '/_authenticated/app/posture': typeof AuthenticatedAppPostureRoute
+  '/_authenticated/app/risk': typeof AuthenticatedAppRiskRoute
+  '/_authenticated/app/thresholds': typeof AuthenticatedAppThresholdsRoute
+  '/_authenticated/app/timeline': typeof AuthenticatedAppTimelineRoute
+  '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +332,28 @@ export interface FileRouteTypes {
     | '/risk'
     | '/thresholds'
     | '/timeline'
+    | '/demo/alerts'
+    | '/demo/assets'
+    | '/demo/copilot'
+    | '/demo/deployment'
+    | '/demo/events'
+    | '/demo/map'
+    | '/demo/posture'
+    | '/demo/risk'
+    | '/demo/thresholds'
+    | '/demo/timeline'
+    | '/demo/'
+    | '/app/alerts'
+    | '/app/assets'
+    | '/app/copilot'
+    | '/app/deployment'
+    | '/app/events'
+    | '/app/map'
+    | '/app/posture'
+    | '/app/risk'
+    | '/app/thresholds'
+    | '/app/timeline'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -144,6 +367,28 @@ export interface FileRouteTypes {
     | '/risk'
     | '/thresholds'
     | '/timeline'
+    | '/demo/alerts'
+    | '/demo/assets'
+    | '/demo/copilot'
+    | '/demo/deployment'
+    | '/demo/events'
+    | '/demo/map'
+    | '/demo/posture'
+    | '/demo/risk'
+    | '/demo/thresholds'
+    | '/demo/timeline'
+    | '/demo'
+    | '/app/alerts'
+    | '/app/assets'
+    | '/app/copilot'
+    | '/app/deployment'
+    | '/app/events'
+    | '/app/map'
+    | '/app/posture'
+    | '/app/risk'
+    | '/app/thresholds'
+    | '/app/timeline'
+    | '/app'
   id:
     | '__root__'
     | '/'
@@ -157,6 +402,28 @@ export interface FileRouteTypes {
     | '/risk'
     | '/thresholds'
     | '/timeline'
+    | '/demo/alerts'
+    | '/demo/assets'
+    | '/demo/copilot'
+    | '/demo/deployment'
+    | '/demo/events'
+    | '/demo/map'
+    | '/demo/posture'
+    | '/demo/risk'
+    | '/demo/thresholds'
+    | '/demo/timeline'
+    | '/demo/'
+    | '/_authenticated/app/alerts'
+    | '/_authenticated/app/assets'
+    | '/_authenticated/app/copilot'
+    | '/_authenticated/app/deployment'
+    | '/_authenticated/app/events'
+    | '/_authenticated/app/map'
+    | '/_authenticated/app/posture'
+    | '/_authenticated/app/risk'
+    | '/_authenticated/app/thresholds'
+    | '/_authenticated/app/timeline'
+    | '/_authenticated/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -171,6 +438,28 @@ export interface RootRouteChildren {
   RiskRoute: typeof RiskRoute
   ThresholdsRoute: typeof ThresholdsRoute
   TimelineRoute: typeof TimelineRoute
+  DemoAlertsRoute: typeof DemoAlertsRoute
+  DemoAssetsRoute: typeof DemoAssetsRoute
+  DemoCopilotRoute: typeof DemoCopilotRoute
+  DemoDeploymentRoute: typeof DemoDeploymentRoute
+  DemoEventsRoute: typeof DemoEventsRoute
+  DemoMapRoute: typeof DemoMapRoute
+  DemoPostureRoute: typeof DemoPostureRoute
+  DemoRiskRoute: typeof DemoRiskRoute
+  DemoThresholdsRoute: typeof DemoThresholdsRoute
+  DemoTimelineRoute: typeof DemoTimelineRoute
+  DemoIndexRoute: typeof DemoIndexRoute
+  AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
+  AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRoute
+  AuthenticatedAppCopilotRoute: typeof AuthenticatedAppCopilotRoute
+  AuthenticatedAppDeploymentRoute: typeof AuthenticatedAppDeploymentRoute
+  AuthenticatedAppEventsRoute: typeof AuthenticatedAppEventsRoute
+  AuthenticatedAppMapRoute: typeof AuthenticatedAppMapRoute
+  AuthenticatedAppPostureRoute: typeof AuthenticatedAppPostureRoute
+  AuthenticatedAppRiskRoute: typeof AuthenticatedAppRiskRoute
+  AuthenticatedAppThresholdsRoute: typeof AuthenticatedAppThresholdsRoute
+  AuthenticatedAppTimelineRoute: typeof AuthenticatedAppTimelineRoute
+  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -252,6 +541,160 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TimelineRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo/': {
+      id: '/demo/'
+      path: '/demo'
+      fullPath: '/demo/'
+      preLoaderRoute: typeof DemoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/alerts': {
+      id: '/demo/alerts'
+      path: '/demo/alerts'
+      fullPath: '/demo/alerts'
+      preLoaderRoute: typeof DemoAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/assets': {
+      id: '/demo/assets'
+      path: '/demo/assets'
+      fullPath: '/demo/assets'
+      preLoaderRoute: typeof DemoAssetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/copilot': {
+      id: '/demo/copilot'
+      path: '/demo/copilot'
+      fullPath: '/demo/copilot'
+      preLoaderRoute: typeof DemoCopilotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/deployment': {
+      id: '/demo/deployment'
+      path: '/demo/deployment'
+      fullPath: '/demo/deployment'
+      preLoaderRoute: typeof DemoDeploymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/events': {
+      id: '/demo/events'
+      path: '/demo/events'
+      fullPath: '/demo/events'
+      preLoaderRoute: typeof DemoEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/map': {
+      id: '/demo/map'
+      path: '/demo/map'
+      fullPath: '/demo/map'
+      preLoaderRoute: typeof DemoMapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/posture': {
+      id: '/demo/posture'
+      path: '/demo/posture'
+      fullPath: '/demo/posture'
+      preLoaderRoute: typeof DemoPostureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/risk': {
+      id: '/demo/risk'
+      path: '/demo/risk'
+      fullPath: '/demo/risk'
+      preLoaderRoute: typeof DemoRiskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/thresholds': {
+      id: '/demo/thresholds'
+      path: '/demo/thresholds'
+      fullPath: '/demo/thresholds'
+      preLoaderRoute: typeof DemoThresholdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/timeline': {
+      id: '/demo/timeline'
+      path: '/demo/timeline'
+      fullPath: '/demo/timeline'
+      preLoaderRoute: typeof DemoTimelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/': {
+      id: '/_authenticated/app/'
+      path: '/app'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/alerts': {
+      id: '/_authenticated/app/alerts'
+      path: '/app/alerts'
+      fullPath: '/app/alerts'
+      preLoaderRoute: typeof AuthenticatedAppAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/assets': {
+      id: '/_authenticated/app/assets'
+      path: '/app/assets'
+      fullPath: '/app/assets'
+      preLoaderRoute: typeof AuthenticatedAppAssetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/copilot': {
+      id: '/_authenticated/app/copilot'
+      path: '/app/copilot'
+      fullPath: '/app/copilot'
+      preLoaderRoute: typeof AuthenticatedAppCopilotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/deployment': {
+      id: '/_authenticated/app/deployment'
+      path: '/app/deployment'
+      fullPath: '/app/deployment'
+      preLoaderRoute: typeof AuthenticatedAppDeploymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/events': {
+      id: '/_authenticated/app/events'
+      path: '/app/events'
+      fullPath: '/app/events'
+      preLoaderRoute: typeof AuthenticatedAppEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/map': {
+      id: '/_authenticated/app/map'
+      path: '/app/map'
+      fullPath: '/app/map'
+      preLoaderRoute: typeof AuthenticatedAppMapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/posture': {
+      id: '/_authenticated/app/posture'
+      path: '/app/posture'
+      fullPath: '/app/posture'
+      preLoaderRoute: typeof AuthenticatedAppPostureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/risk': {
+      id: '/_authenticated/app/risk'
+      path: '/app/risk'
+      fullPath: '/app/risk'
+      preLoaderRoute: typeof AuthenticatedAppRiskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/thresholds': {
+      id: '/_authenticated/app/thresholds'
+      path: '/app/thresholds'
+      fullPath: '/app/thresholds'
+      preLoaderRoute: typeof AuthenticatedAppThresholdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/timeline': {
+      id: '/_authenticated/app/timeline'
+      path: '/app/timeline'
+      fullPath: '/app/timeline'
+      preLoaderRoute: typeof AuthenticatedAppTimelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -267,6 +710,28 @@ const rootRouteChildren: RootRouteChildren = {
   RiskRoute: RiskRoute,
   ThresholdsRoute: ThresholdsRoute,
   TimelineRoute: TimelineRoute,
+  DemoAlertsRoute: DemoAlertsRoute,
+  DemoAssetsRoute: DemoAssetsRoute,
+  DemoCopilotRoute: DemoCopilotRoute,
+  DemoDeploymentRoute: DemoDeploymentRoute,
+  DemoEventsRoute: DemoEventsRoute,
+  DemoMapRoute: DemoMapRoute,
+  DemoPostureRoute: DemoPostureRoute,
+  DemoRiskRoute: DemoRiskRoute,
+  DemoThresholdsRoute: DemoThresholdsRoute,
+  DemoTimelineRoute: DemoTimelineRoute,
+  DemoIndexRoute: DemoIndexRoute,
+  AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
+  AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRoute,
+  AuthenticatedAppCopilotRoute: AuthenticatedAppCopilotRoute,
+  AuthenticatedAppDeploymentRoute: AuthenticatedAppDeploymentRoute,
+  AuthenticatedAppEventsRoute: AuthenticatedAppEventsRoute,
+  AuthenticatedAppMapRoute: AuthenticatedAppMapRoute,
+  AuthenticatedAppPostureRoute: AuthenticatedAppPostureRoute,
+  AuthenticatedAppRiskRoute: AuthenticatedAppRiskRoute,
+  AuthenticatedAppThresholdsRoute: AuthenticatedAppThresholdsRoute,
+  AuthenticatedAppTimelineRoute: AuthenticatedAppTimelineRoute,
+  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
