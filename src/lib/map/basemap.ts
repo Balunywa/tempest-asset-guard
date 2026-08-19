@@ -19,7 +19,7 @@ const ATTRIB_AZURE = "&copy; Microsoft, &copy; TomTom";
 function rasterStyle(tiles: string[], attribution: string, background: string): StyleSpecification {
   return {
     version: 8,
-    glyphs: "https://basemaps.cartocdn.com/gl/fonts/{fontstack}/{range}.pbf",
+    glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
     sources: {
       basemap: {
         type: "raster",

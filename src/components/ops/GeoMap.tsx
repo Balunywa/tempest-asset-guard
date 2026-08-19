@@ -442,7 +442,7 @@ export default function GeoMap({
       filter: ["any", ["==", ["get", "major"], 1], ["==", ["get", "selected"], 1]],
       layout: {
         "text-field": ["get", "name"],
-        "text-font": ["Open Sans Semibold"],
+        "text-font": ["Noto Sans Bold"],
         "text-size": 10,
         "text-offset": [0.8, 0],
         "text-anchor": "left",
@@ -472,7 +472,7 @@ export default function GeoMap({
       source: "track-points",
       layout: {
         "text-field": ["get", "label"],
-        "text-font": ["Open Sans Bold"],
+        "text-font": ["Noto Sans Bold"],
         "text-size": 9,
       },
       paint: { "text-color": "#04070d" },
@@ -484,7 +484,7 @@ export default function GeoMap({
       minzoom: 5,
       layout: {
         "text-field": ["get", "detail"],
-        "text-font": ["Open Sans Regular"],
+        "text-font": ["Noto Sans Regular"],
         "text-size": 10,
         "text-offset": [0, -1.5],
       },
@@ -512,7 +512,7 @@ export default function GeoMap({
       source: "storm-center",
       layout: {
         "text-field": ["concat", ["get", "name"], "  ", ["get", "wind"]],
-        "text-font": ["Open Sans Bold"],
+        "text-font": ["Noto Sans Bold"],
         "text-size": 11,
         "text-offset": [0, 1.6],
       },
