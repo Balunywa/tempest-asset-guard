@@ -1,5 +1,5 @@
-import { Link, useRouterState, type LinkProps } from "@tanstack/react-router";
-import type { ComponentPropsWithoutRef } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import type { ComponentPropsWithoutRef, ReactElement } from "react";
 
 export type OpsBase = "/demo" | "/app";
 
@@ -21,6 +21,6 @@ type OpsLinkProps = Omit<ComponentPropsWithoutRef<"a">, "href"> & {
 export function OpsLink({ to, ...rest }: OpsLinkProps) {
   const base = useOpsBase();
   const href = to === "/" ? base : `${base}${to}`;
-  const AnyLink = Link as unknown as (props: Record<string, unknown>) => JSX.Element;
+  const AnyLink = Link as unknown as (props: Record<string, unknown>) => ReactElement;
   return <AnyLink to={href} {...rest} />;
 }
