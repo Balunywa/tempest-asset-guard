@@ -5,7 +5,7 @@ import { Card, Section, SiteChrome } from "@/components/site/SiteChrome";
 
 const TITLE = "Gulf Hurricane & Asset Impact Intelligence | Azure Accelerator";
 const DESC =
-  "Join tropical forecasts to your offshore estate: explainable asset risk scoring, T-gate response posture and forecast uncertainty — deployable into your own Azure tenant.";
+  "Join tropical forecasts to your offshore estate with explainable asset risk scoring, T-gate response posture and forecast uncertainty, deployable into your own Azure tenant.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
