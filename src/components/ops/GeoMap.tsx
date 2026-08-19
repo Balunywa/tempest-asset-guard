@@ -662,7 +662,7 @@ export default function GeoMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-    const next = satellite ? "satellite" : "dark";
+    const next = activeBasemap;
     if (lastBasemap.current === null) {
       lastBasemap.current = next;
       return;
@@ -670,11 +670,12 @@ export default function GeoMap({
     if (lastBasemap.current === next) return;
     lastBasemap.current = next;
     map.setStyle(basemapStyle(next));
-    map.once("styledata", () => {
+    // vector styles finish asynchronously; rebuild once the new style is idle
+    map.once("idle", () => {
       buildLayers();
       setStyleVersion((v) => v + 1);
     });
-  }, [satellite, ready, buildLayers]);
+  }, [activeBasemap, ready, buildLayers]);
 
   // ------------------------------------------------------------ data sync
   useEffect(() => {
