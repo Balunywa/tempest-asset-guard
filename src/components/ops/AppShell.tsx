@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   AlertTriangle,
@@ -17,6 +17,10 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { OpsLink, useOpsBase } from "@/components/ops/ops-nav";
+import { useAuth } from "@/lib/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 const NAV = [
   { to: "/", label: "Operations Overview", icon: LayoutGrid },
